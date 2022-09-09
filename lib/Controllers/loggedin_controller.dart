@@ -1,5 +1,5 @@
-import 'package:clean_bucket_list/Models/status_item_wl.dart';
-import 'package:clean_bucket_list/init.dart';
+import 'package:tablist_app/Models/status_item_wl.dart';
+import 'package:tablist_app/init.dart';
 import 'package:get/get.dart';
 
 import '../Models/User.dart';

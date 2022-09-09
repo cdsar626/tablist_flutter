@@ -1,7 +1,7 @@
-import 'package:clean_bucket_list/Models/User.dart';
+import 'package:tablist_app/Models/User.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:clean_bucket_list/Data/user_data_bridge.dart';
+import 'package:tablist_app/Data/user_data_bridge.dart';
 
 import 'db_connection.dart';
 

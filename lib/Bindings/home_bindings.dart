@@ -1,4 +1,4 @@
-import 'package:clean_bucket_list/init.dart';
+import 'package:tablist_app/init.dart';
 import 'package:get/get.dart';
 
 import '../Controllers/home_controller.dart';

@@ -1,8 +1,8 @@
-import 'package:clean_bucket_list/Bindings/loggedin_bindings.dart';
-import 'package:clean_bucket_list/View/Pages/logged_in.dart';
-import 'package:clean_bucket_list/init.dart';
-import 'package:clean_bucket_list/splash_screen.dart';
-import 'package:clean_bucket_list/translations.dart';
+import 'package:tablist_app/Bindings/loggedin_bindings.dart';
+import 'package:tablist_app/View/Pages/logged_in.dart';
+import 'package:tablist_app/init.dart';
+import 'package:tablist_app/splash_screen.dart';
+import 'package:tablist_app/translations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,5 +1,5 @@
-import 'package:clean_bucket_list/Controllers/loggedin_controller.dart';
-import 'package:clean_bucket_list/Models/status_item_wl.dart';
+import 'package:tablist_app/Controllers/loggedin_controller.dart';
+import 'package:tablist_app/Models/status_item_wl.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
@@ -17,7 +17,7 @@ class LoggedInPage extends GetView<LoggedInController> {
       home: Scaffold(
         appBar: NeumorphicAppBar(
           padding: 0,
-          title: const Text('Simple yet Useful Bucket List'),
+          title: const Text('TABList'),
           titleSpacing: 0,
           leading: TextButton(
               onPressed: () async {
