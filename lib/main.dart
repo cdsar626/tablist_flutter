@@ -1,4 +1,6 @@
+import 'package:tablist_app/Bindings/history_bindings.dart';
 import 'package:tablist_app/Bindings/loggedin_bindings.dart';
+import 'package:tablist_app/View/Pages/history.dart';
 import 'package:tablist_app/View/Pages/logged_in.dart';
 import 'package:tablist_app/init.dart';
 import 'package:tablist_app/splash_screen.dart';
@@ -22,6 +24,7 @@ void main() async{
           getPages: [
             GetPage(name: '/home', page: () => const HomePage(), binding: HomeBinding(init)),
             GetPage(name: '/loggedin', page: () => const LoggedInPage(), binding: LoggedInBinding(init)),
+            GetPage(name: '/history', page: () => const HistoryPage(log: [],), binding: HistoryBinding(init)),
           ],
         );
       } else {

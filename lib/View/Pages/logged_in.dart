@@ -4,6 +4,7 @@ import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:get/get.dart';
+import 'package:tablist_app/View/Pages/history.dart';
 
 class LoggedInPage extends GetView<LoggedInController> {
   const LoggedInPage({Key? key}) : super(key: key);
@@ -40,7 +41,11 @@ class LoggedInPage extends GetView<LoggedInController> {
                     child: Column(
                       children: [
                         Text(
-                          'happy_msg01'.trParams({'username': controller.init.hiveDB.get('username').toString()}),
+                          'happy_msg01'.trParams({
+                            'username': controller.init.hiveDB
+                                .get('username')
+                                .toString()
+                          }),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -84,7 +89,8 @@ class LoggedInPage extends GetView<LoggedInController> {
                       cardKeyList.add(GlobalKey());
                       RxInt progressValue = 0.obs;
                       progressValue.value = controller
-                          .init.user.value.wishes[index]['progress'].round();
+                          .init.user.value.wishes[index]['progress']
+                          .round();
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 2.5),
                         key: cardKeyList[index],
@@ -93,10 +99,9 @@ class LoggedInPage extends GetView<LoggedInController> {
                           expandedColor: tileColor(status, index, controller),
                           expandedTextColor: const Color(0xFF7A7A7A),
                           title: Text(
-                              controller.init.user.value.wishes[index]['title'],
-                          style: const TextStyle(
-                            color: Colors.black
-                          ),),
+                            controller.init.user.value.wishes[index]['title'],
+                            style: const TextStyle(color: Colors.black),
+                          ),
                           subtitle: Text(
                             '${creationDate.year}-${creationDate.month}-${creationDate.day}',
                             style: const TextStyle(
@@ -105,79 +110,115 @@ class LoggedInPage extends GetView<LoggedInController> {
                             ),
                           ),
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 20.0),
-                              child: status == StatusItemWL.completed.index? null : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            Container(
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Column(
                                 children: [
-                                  NeumorphicButton(
-                                    child: Text('paused'.tr),
-                                    onPressed: () async {
-                                      await controller.pauseButtonPressed(status, index);
-                                      await controller.init.user.refresh();
-                                      Get.offNamed('/loggedin', preventDuplicates: false);
-                                    },
-                                    style: NeumorphicStyle(
-                                      depth: status == StatusItemWL.paused.index
-                                          ? -10
-                                          : 10,
-                                      boxShape: const NeumorphicBoxShape.stadium(),
-                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 0.0),
+                                    child: status ==
+                                            StatusItemWL.completed.index
+                                        ? null
+                                        : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              NeumorphicButton(
+                                                child: Text('paused'.tr),
+                                                onPressed: () async {
+                                                  await controller
+                                                      .pauseButtonPressed(
+                                                          status, index);
+                                                  await controller.init.user
+                                                      .refresh();
+                                                  Get.offNamed('/loggedin',
+                                                      preventDuplicates: false);
+                                                },
+                                                style: NeumorphicStyle(
+                                                  depth: status ==
+                                                          StatusItemWL
+                                                              .paused.index
+                                                      ? -10
+                                                      : 10,
+                                                  boxShape:
+                                                      const NeumorphicBoxShape
+                                                          .stadium(),
+                                                ),
+                                              ),
+                                              NeumorphicButton(
+                                                child: Text('Abandoned'.tr),
+                                                onPressed: () async {
+                                                  await controller
+                                                      .abandonedButtonPressed(
+                                                          status, index);
+                                                  await controller.init.user
+                                                      .refresh();
+                                                  Get.offNamed('/loggedin',
+                                                      preventDuplicates: false);
+                                                },
+                                                style: NeumorphicStyle(
+                                                    depth: status ==
+                                                            StatusItemWL
+                                                                .abandoned.index
+                                                        ? -4
+                                                        : 4,
+                                                    boxShape:
+                                                        const NeumorphicBoxShape
+                                                            .stadium()),
+                                              ),
+                                            ],
+                                          ),
                                   ),
-                                  NeumorphicButton(
-                                    child: Text('Abandoned'.tr),
-                                    onPressed: () async {
-                                      await controller.abandonedButtonPressed(status, index);
-                                      await controller.init.user.refresh();
-                                      Get.offNamed('/loggedin', preventDuplicates: false);
-                                    },
-                                    style: NeumorphicStyle(
-                                        depth:
-                                            status == StatusItemWL.abandoned.index
-                                                ? -4
-                                                : 4,
-                                        boxShape:
-                                            const NeumorphicBoxShape.stadium()),
+                                  Column(
+                                    children: [
+                                      Obx(() =>
+                                          Text(progressValue.value.toString())),
+                                      Obx(
+                                        () => Slider(
+                                          min: 0,
+                                          max: 100,
+                                          divisions: 100,
+                                          value: progressValue.value.toDouble(),
+                                          onChangeEnd: (endVal) async {
+                                            await controller.updateProgress(
+                                                endVal.roundToDouble(), index);
+                                            await controller.init.user
+                                                .refresh();
+                                            progressValue.value =
+                                                endVal.round();
+                                            if (endVal == 100) {
+                                              Get.offNamed('/loggedin',
+                                                  preventDuplicates: false);
+                                            }
+                                          },
+                                          onChanged: (val) {
+                                            progressValue.value = val.round();
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Obx(
-                                () => NeumorphicSlider(
-                                  min: 0,
-                                  max: 100,
-                                  value: progressValue.value.toDouble(),
-                                  onChangeEnd: (endVal) async {
-                                    await controller.updateProgress(endVal, index);
-                                    await controller.init.user.refresh();
-                                    progressValue.value = endVal.round();
-                                    if (endVal == 100) {
-                                      Get.offNamed('/loggedin', preventDuplicates: false);
-                                    }
-                                  },
-                                  onChanged: (val) {
-                                    progressValue.value = val.round();
-                                  },
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const TextButton(
-                                    child: Text('History'),
-                                    onPressed: null,
-                                  ),
-                                  TextButton(
-                                    child: const Text('Delete'),
-                                    onPressed: () async {
-                                      await controller.deleteWish(index);
-                                      controller.init.user.refresh();
-                                    },
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextButton(
+                                        child: const Text('History'),
+                                        onPressed: () {
+                                          print(controller.init.user.value.wishes[index]['history']);
+                                          Get.to(() => HistoryPage(log: controller.init.user.value.wishes[index]['history'],));
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text('Delete'),
+                                        onPressed: () async {
+                                          await controller.deleteWish(index);
+                                          controller.init.user.refresh();
+                                        },
+                                      )
+                                    ],
                                   )
                                 ],
                               ),
@@ -213,19 +254,17 @@ class LoggedInPage extends GetView<LoggedInController> {
       ),
     );
   }
-
 }
 
 Color? tileColor(int status, int index, controller) {
   return status == StatusItemWL.paused.index
       ? const Color(0xFFFFF9C4)
       : status == StatusItemWL.abandoned.index
-      ? const Color(0xB7FF7A7A)
-      : status == StatusItemWL.active.index
-      ? const Color(0xFFD7D7D7)
-      : Colors.greenAccent;
+          ? const Color(0xB7FF7A7A)
+          : status == StatusItemWL.active.index
+              ? const Color(0xFFD7D7D7)
+              : Colors.greenAccent;
 }
-
 
 void reorderLocalWishesList(oldIndex, newIndex, controller) {
   // Initialization for reusing code
