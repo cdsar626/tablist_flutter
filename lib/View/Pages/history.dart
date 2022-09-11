@@ -22,22 +22,23 @@ class HistoryPage extends GetView<HistoryController> {
             child: ListView.builder(
               itemCount: log.length,
                 itemBuilder: (context, index) {
-                DateTime when = log[log.length - 1 - index]['when'];
-                var status = log[index]['status'];
-                if(log[index]['status'] == StatusItemWL.active.index) {
+                int inverseIndex = log.length - index - 1;
+                DateTime when = log[inverseIndex]['when'];
+                var status = log[inverseIndex]['status'];
+                if(log[inverseIndex]['status'] == StatusItemWL.active.index) {
                   status = 'Active';
-                } else if (log[index]['status'] == StatusItemWL.paused.index) {
+                } else if (log[inverseIndex]['status'] == StatusItemWL.paused.index) {
                   status = 'Paused';
-                } else if (log[index]['status'] == StatusItemWL.abandoned.index) {
+                } else if (log[inverseIndex]['status'] == StatusItemWL.abandoned.index) {
                   status = 'Abandoned';
-                } else if (log[index]['status'] == StatusItemWL.completed.index) {
+                } else if (log[inverseIndex]['status'] == StatusItemWL.completed.index) {
                   status = 'Completed';
                 }
               return Card(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    HistoryLine1(log, index, status),
+                    HistoryLine1(log, inverseIndex, status),
                     Container(
                       margin: const EdgeInsets.only(bottom: 5.0),
                       child: Row(
@@ -45,7 +46,7 @@ class HistoryPage extends GetView<HistoryController> {
                         children: [
                           Container(alignment: Alignment.centerLeft,
                               margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Text('Progreso: ${log[index]['progress'].round()}')),
+                              child: Text('Progreso: ${log[inverseIndex]['progress'].round()}')),
                           Container(alignment: Alignment.centerRight,
                               margin: const EdgeInsets.symmetric(horizontal: 10.0),
                               child: Text('${when.year}-${when.month}-${when.day}')),
@@ -66,7 +67,7 @@ class HistoryPage extends GetView<HistoryController> {
 class HistoryLine1 extends StatelessWidget {
   final List<dynamic> log;
   final int index;
-  final String status;
+  final String? status;
 
 
   const HistoryLine1(this.log, this.index, this.status, {
