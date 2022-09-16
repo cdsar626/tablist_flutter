@@ -10,7 +10,10 @@ class AppTranslations extends Translations {
       'happy_msg01': 'Hello @username, have a nice day. :)',
       'log_out': 'Tap here to log out.',
       'paused': 'Paused',
-      'abandoned': 'Abandoned'
+      'abandoned': 'Abandoned',
+      'progress': 'Progress: @num',
+      'historyProgressUpdate': 'Progress has been updated',
+      'historyStatusUpdate': 'Status updated to: @status',
     },
     'es': {
       'init': 'Inicializando',
@@ -20,6 +23,9 @@ class AppTranslations extends Translations {
       'log_out': 'Tap aquí para cerrar sesión.',
       'paused': 'Pausado',
       'abandoned': 'Abandonado',
+      'progress': 'Progreso: @num',
+      'historyProgressUpdate': 'Se actualizó progreso',
+      'historyStatusUpdate': 'Se actualizó estado a: @status',
     },
   };
 }

@@ -37,6 +37,7 @@ class LoggedInPage extends GetView<LoggedInController> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: NeumorphicButton(
+                  onPressed: null,
                   child: Center(
                     child: Column(
                       children: [
@@ -51,7 +52,6 @@ class LoggedInPage extends GetView<LoggedInController> {
                       ],
                     ),
                   ),
-                  onPressed: null,
                 ),
               ),
               Expanded(
@@ -126,7 +126,6 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                 MainAxisAlignment.spaceEvenly,
                                             children: [
                                               NeumorphicButton(
-                                                child: Text('paused'.tr),
                                                 onPressed: () async {
                                                   await controller
                                                       .pauseButtonPressed(
@@ -146,9 +145,9 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                       const NeumorphicBoxShape
                                                           .stadium(),
                                                 ),
+                                                child: Text('paused'.tr),
                                               ),
                                               NeumorphicButton(
-                                                child: Text('Abandoned'.tr),
                                                 onPressed: () async {
                                                   await controller
                                                       .abandonedButtonPressed(
@@ -167,6 +166,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                     boxShape:
                                                         const NeumorphicBoxShape
                                                             .stadium()),
+                                                child: Text('Abandoned'.tr),
                                               ),
                                             ],
                                           ),
@@ -207,7 +207,6 @@ class LoggedInPage extends GetView<LoggedInController> {
                                       TextButton(
                                         child: const Text('History'),
                                         onPressed: () {
-                                          print(controller.init.user.value.wishes[index]['history']);
                                           Get.to(() => HistoryPage(log: controller.init.user.value.wishes[index]['history'],));
                                         },
                                       ),
