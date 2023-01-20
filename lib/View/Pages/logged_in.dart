@@ -1,10 +1,13 @@
 import 'package:tablist_app/Controllers/loggedin_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:tablist_app/Models/status_item_wl.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:get/get.dart';
 import 'package:tablist_app/View/Pages/history.dart';
+import 'package:dotted_decoration/dotted_decoration.dart';
+
+import 'package:tablist_app/kUI.dart';
 
 class LoggedInPage extends GetView<LoggedInController> {
   const LoggedInPage({Key? key}) : super(key: key);
@@ -13,11 +16,10 @@ class LoggedInPage extends GetView<LoggedInController> {
   Widget build(BuildContext context) {
     final List<GlobalKey<ExpansionTileCardState>> cardKeyList = [];
     String newWishInput = '';
-    return NeumorphicApp(
+    return MaterialApp(
       themeMode: ThemeMode.dark,
       home: Scaffold(
-        appBar: NeumorphicAppBar(
-          padding: 0,
+        appBar: AppBar(
           title: const Text('TABList'),
           titleSpacing: 0,
           leading: TextButton(
@@ -31,12 +33,12 @@ class LoggedInPage extends GetView<LoggedInController> {
               )),
         ),
         body: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
+          margin: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
             children: [
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: NeumorphicButton(
+                child: ElevatedButton(
                   onPressed: null,
                   child: Center(
                     child: Column(
@@ -87,143 +89,208 @@ class LoggedInPage extends GetView<LoggedInController> {
                           controller.init.user.value.wishes[index]['status'];
                       //var currentItem = controller.init.user.value.wishes[index];
                       cardKeyList.add(GlobalKey());
+                      double valueOnStart = 0;
                       RxInt progressValue = 0.obs;
                       progressValue.value = controller
                           .init.user.value.wishes[index]['progress']
                           .round();
                       return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 2.5),
+                        // margin: const EdgeInsets.symmetric(vertical: 2.5),
+                        decoration: DottedDecoration(
+                          shape: Shape.line,
+                          linePosition: LinePosition.top,
+                          dash: const <int>[8, 16],
+                        ),
                         key: cardKeyList[index],
-                        child: ExpansionTileCard(
-                          baseColor: tileColor(status, index, controller),
-                          expandedColor: tileColor(status, index, controller),
-                          expandedTextColor: const Color(0xFF7A7A7A),
-                          title: Text(
-                            controller.init.user.value.wishes[index]['title'],
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                          subtitle: Text(
-                            '${creationDate.year}-${creationDate.month}-${creationDate.day}',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.black38,
-                            ),
-                          ),
-                          children: [
-                            Container(
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Column(
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          return Stack(
+                            children: [
+                              Obx(() => Positioned.fill(
+                                  right: (constraints.maxWidth / 100) *
+                                      (100 - progressValue.value.toDouble()),
+                                  child: Container(
+                                    color: progressColor(status, index),
+                                  ),
+                                ),
+                              ),
+                              ExpansionTileCard(
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(0.0)),
+                                baseColor: tileColor(status, index),
+                                expandedColor:
+                                    tileColor(status, index),
+                                expandedTextColor: const Color(0xFF7A7A7A),
+                                title: Text(
+                                  controller.init.user.value.wishes[index]
+                                      ['title'],
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                                subtitle: Text(
+                                  '${creationDate.year}-${creationDate.month}-${creationDate.day}',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.black38,
+                                  ),
+                                ),
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 0.0),
-                                    child: status ==
-                                            StatusItemWL.completed.index
-                                        ? null
-                                        : Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              NeumorphicButton(
-                                                onPressed: () async {
-                                                  await controller
-                                                      .pauseButtonPressed(
-                                                          status, index);
-                                                  await controller.init.user
-                                                      .refresh();
-                                                  Get.offNamed('/loggedin',
-                                                      preventDuplicates: false);
-                                                },
-                                                style: NeumorphicStyle(
-                                                  depth: status ==
-                                                          StatusItemWL
-                                                              .paused.index
-                                                      ? -10
-                                                      : 10,
-                                                  boxShape:
-                                                      const NeumorphicBoxShape
-                                                          .stadium(),
+                                  Container(
+                                    //margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 0.0),
+                                          child: status ==
+                                                  StatusItemWL.completed.index
+                                              ? null
+                                              : Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    ElevatedButton(
+                                                      onPressed: () async {
+                                                        await controller
+                                                            .pauseButtonPressed(
+                                                                status, index);
+                                                        await controller
+                                                            .init.user
+                                                            .refresh();
+                                                        Get.offNamed(
+                                                            '/loggedin',
+                                                            preventDuplicates:
+                                                                false);
+                                                      },
+                                                      style: null,
+                                                      child: Text('paused'.tr),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () async {
+                                                        await controller
+                                                            .abandonedButtonPressed(
+                                                                status, index);
+                                                        await controller
+                                                            .init.user
+                                                            .refresh();
+                                                        Get.offNamed(
+                                                            '/loggedin',
+                                                            preventDuplicates:
+                                                                false);
+                                                      },
+                                                      style: null,
+                                                      child:
+                                                          Text('Abandoned'.tr),
+                                                    ),
+                                                  ],
                                                 ),
-                                                child: Text('paused'.tr),
+                                        ),
+                                        Column(
+                                          children: [
+                                            Center(
+                                              child: SizedBox(
+                                                height: 100,
+                                                width: constraints.maxWidth - 1,
+                                                child: Stack(
+                                                  children: [
+
+                                                    Obx(() => Positioned(
+                                                        top: 0,
+                                                        right: (constraints.maxWidth / 100) *
+                                                            ((99 - progressValue.value.toDouble()))+1,
+                                                        child: Row(
+                                                          children: [
+                                                            Container(
+                                                              height: 25,
+                                                              width: 5,
+                                                              color: Colors.black,
+                                                              child: GestureDetector(
+                                                                dragStartBehavior: DragStartBehavior.down,
+                                                                onHorizontalDragUpdate: (details) {
+                                                                  valueOnStart = valueOnStart + details.primaryDelta!;
+                                                                  print(valueOnStart);
+                                                                  progressValue.value = (valueOnStart / constraints.maxWidth * 100).toInt() ;
+                                                                },
+                                                                onHorizontalDragStart: (details) {
+                                                                  valueOnStart = details.localPosition.dx + ((constraints.maxWidth / 100) * progressValue.value);
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              NeumorphicButton(
-                                                onPressed: () async {
+                                            ),
+                                            Obx(() => Text(progressValue.value
+                                                .toString())),
+                                            Obx(
+                                              () => Slider(
+                                                min: 0,
+                                                max: 100,
+                                                divisions: 100,
+                                                value: progressValue.value
+                                                    .toDouble(),
+                                                onChangeEnd: (endVal) async {
                                                   await controller
-                                                      .abandonedButtonPressed(
-                                                          status, index);
+                                                      .updateProgress(
+                                                          endVal
+                                                              .roundToDouble(),
+                                                          index);
                                                   await controller.init.user
                                                       .refresh();
-                                                  Get.offNamed('/loggedin',
-                                                      preventDuplicates: false);
+                                                  progressValue.value =
+                                                      endVal.round();
+                                                  if (endVal == 100) {
+                                                    Get.offNamed('/loggedin',
+                                                        preventDuplicates:
+                                                            false);
+                                                  }
                                                 },
-                                                style: NeumorphicStyle(
-                                                    depth: status ==
-                                                            StatusItemWL
-                                                                .abandoned.index
-                                                        ? -4
-                                                        : 4,
-                                                    boxShape:
-                                                        const NeumorphicBoxShape
-                                                            .stadium()),
-                                                child: Text('Abandoned'.tr),
+                                                onChanged: (val) {
+                                                  progressValue.value =
+                                                      val.round();
+                                                },
                                               ),
-                                            ],
-                                          ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      Obx(() =>
-                                          Text(progressValue.value.toString())),
-                                      Obx(
-                                        () => Slider(
-                                          min: 0,
-                                          max: 100,
-                                          divisions: 100,
-                                          value: progressValue.value.toDouble(),
-                                          onChangeEnd: (endVal) async {
-                                            await controller.updateProgress(
-                                                endVal.roundToDouble(), index);
-                                            await controller.init.user
-                                                .refresh();
-                                            progressValue.value =
-                                                endVal.round();
-                                            if (endVal == 100) {
-                                              Get.offNamed('/loggedin',
-                                                  preventDuplicates: false);
-                                            }
-                                          },
-                                          onChanged: (val) {
-                                            progressValue.value = val.round();
-                                          },
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      TextButton(
-                                        child: const Text('History'),
-                                        onPressed: () {
-                                          Get.to(() => HistoryPage(log: controller.init.user.value.wishes[index]['history'],));
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text('Delete'),
-                                        onPressed: () async {
-                                          await controller.deleteWish(index);
-                                          controller.init.user.refresh();
-                                        },
-                                      )
-                                    ],
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            TextButton(
+                                              child: const Text('History'),
+                                              onPressed: () {
+                                                Get.to(() => HistoryPage(
+                                                      log: controller
+                                                              .init
+                                                              .user
+                                                              .value
+                                                              .wishes[index]
+                                                          ['history'],
+                                                    ));
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text('Delete'),
+                                              onPressed: () async {
+                                                await controller
+                                                    .deleteWish(index);
+                                                controller.init.user.refresh();
+                                              },
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   )
                                 ],
                               ),
-                            )
-                          ],
-                        ),
+                            ],
+                          );
+                        }),
                       );
                     },
                   ),
@@ -255,14 +322,22 @@ class LoggedInPage extends GetView<LoggedInController> {
   }
 }
 
-Color? tileColor(int status, int index, controller) {
+Color? tileColor(int status, int index) {
   return status == StatusItemWL.paused.index
-      ? const Color(0xFFFFF9C4)
+      ? kColorYellowBase
       : status == StatusItemWL.abandoned.index
-          ? const Color(0xB7FF7A7A)
+          ? kColorRedBase
           : status == StatusItemWL.active.index
-              ? const Color(0xFFD7D7D7)
-              : Colors.greenAccent;
+              ? kColorGreenBase
+              : const Color(0x66C0FFC3);
+}
+
+Color? progressColor(int status, int index) {
+  return status == StatusItemWL.paused.index
+      ? kColorYellowProgressBar
+      : status == StatusItemWL.abandoned.index
+          ? kColorRedProgressBar
+          : kColorGreenProgressBar;
 }
 
 void reorderLocalWishesList(oldIndex, newIndex, controller) {
