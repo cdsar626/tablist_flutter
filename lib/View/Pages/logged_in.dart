@@ -185,7 +185,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                       false);
                                                 },
                                                 style: null,
-                                                child: Text('pause'.tr),
+                                                child: status == StatusItemWL.paused.index? Text('continue'.tr) : Text('pause'.tr),
                                               ),
                                               OutlinedButton(
                                                 onPressed: () async {
@@ -201,8 +201,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                       false);
                                                 },
                                                 style: null,
-                                                child:
-                                                Text('abandon'.tr),
+                                                child: status == StatusItemWL.abandoned.index? Text('continue'.tr) : Text('abandon'.tr),
                                               ),
                                             ],
                                           ),
