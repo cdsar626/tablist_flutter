@@ -9,6 +9,8 @@ Color kColorYellowBase = const Color(0x66FEFFE0);
 Color kColorYellowProgressBar = const Color(0xAAFEFFC3);
 Color kColorRedBase = const Color(0x66FF7A7A);
 Color kColorRedProgressBar = const Color(0x66FF7A7A);
+Color kColorSliderBase = const Color(0xFF000000);
+Color kColorSliderDragged = const Color(0xAA777777);
 
 TextStyle kTextStyleTaskTitle = const TextStyle(
   fontFamily: "ElMessiri",

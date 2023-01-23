@@ -1,5 +1,5 @@
+import 'package:flutter/material.dart';
 import 'package:tablist_app/Controllers/home_controller.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:get/get.dart';
 
 class HomePage extends GetView<HomeController> {
@@ -8,10 +8,10 @@ class HomePage extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     String userInput = '';
-    return NeumorphicApp(
+    return MaterialApp(
       themeMode: ThemeMode.dark,
       home: Scaffold(
-        appBar: NeumorphicAppBar(
+        appBar: AppBar(
           title: const Text('TABList'),
         ),
         body: Container(
@@ -29,7 +29,7 @@ class HomePage extends GetView<HomeController> {
                   },
                 ),
               ),
-              NeumorphicButton(
+              ElevatedButton(
                   onPressed: () async {
                     // Todo Login user
                     if (!await controller.userExists(userInput)) {

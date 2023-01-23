@@ -1,4 +1,5 @@
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:tablist_app/Controllers/history_controller.dart';
 import 'package:get/get.dart';
 import 'package:tablist_app/Models/status_item_wl.dart';
@@ -10,11 +11,13 @@ class HistoryPage extends GetView<HistoryController> {
 
   @override
   Widget build(BuildContext context) {
-    return NeumorphicApp(
-        themeMode: ThemeMode.dark,
+    return MaterialApp(
         home: Scaffold(
-          appBar: NeumorphicAppBar(
+          appBar: AppBar(
             title: const Text('TABList'),
+            leading: IconButton(
+              icon: const Icon(EvaIcons.arrowLeft), onPressed: () { Get.back(); },
+            ),
           ),
           body: Container(
             margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -94,7 +97,7 @@ class HistoryLine1 extends StatelessWidget {
           margin: const EdgeInsets.all(10.0),
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white70,
+            color: Colors.black87,
           ),
           width: 10.0,
           height: 10.0,

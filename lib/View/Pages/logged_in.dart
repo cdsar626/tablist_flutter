@@ -16,20 +16,20 @@ class LoggedInPage extends GetView<LoggedInController> {
   @override
   Widget build(BuildContext context) {
     final List<GlobalKey<ExpansionTileCardState>> cardContainerKeyList = [];
+    final List<GlobalKey<ExpansionTileCardState>> cardExpansionKeyList = [];
     String newWishInput = '';
     return MaterialApp(
-      themeMode: ThemeMode.dark,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('TABList'),
-          titleSpacing: 0,
+          //titleSpacing: 0,
           leading: TextButton(
               onPressed: () async {
                 await controller.logOut();
                 Get.offAllNamed('/home');
               },
               child: const Icon(
-                Icons.logout_rounded,
+                EvaIcons.logOut,
                 size: 40,
               )),
         ),
@@ -58,328 +58,337 @@ class LoggedInPage extends GetView<LoggedInController> {
                 ),
               ),
               Expanded(
-                child: ReorderableListView.builder(
-                    dragStartBehavior: DragStartBehavior.start,
-                    onReorder: (oldIndex, newIndex) async {
-                        // these 'if' are for fix the bugs of the onReorder method
-                      if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        if (oldIndex == newIndex) {
-                          return;
-                        } else {
+                child: Obx(
+                  () => ReorderableListView.builder(
+                      dragStartBehavior: DragStartBehavior.start,
+                      onReorder: (oldIndex, newIndex) async {
+                          // these 'if' are for fix the bugs of the onReorder method
+                        if (oldIndex < newIndex) {
+                            newIndex -= 1;
+                          }
+                          if (oldIndex == newIndex) {
+                            return;
+                          } else {
 
-                        }
+                          }
 
-                        reorderLocalWishesList(oldIndex, newIndex, controller);
-                        // To keep current state of expanded/collapsed when reordering
-                        cardContainerKeyList.insert(
-                            newIndex, cardContainerKeyList.removeAt(oldIndex));
+                          reorderLocalWishesList(oldIndex, newIndex, controller);
+                          // To keep current state of expanded/collapsed when reordering
+                          cardContainerKeyList.insert(
+                              newIndex, cardContainerKeyList.removeAt(oldIndex));
 
-                        // We call updateWishesSort to update the database with the
-                        // new values of the user index
-                        await controller.updateWishesSort(
-                            controller.init.user.value.username,
-                            oldIndex,
-                            newIndex);
-                      },
-                    itemCount: controller.init.user.value.wishes.length,
-                    itemBuilder: (context, index) {
-                      DateTime creationDate =
-                          controller.init.user.value.wishes[index]['creation'];
-                      List historyOfiWish = controller.init.user.value.wishes[index]["history"];
-                      DateTime updateDate = historyOfiWish[historyOfiWish.length - 1]["when"];
-                      int status =
-                          controller.init.user.value.wishes[index]['status'];
-                      //var currentItem = controller.init.user.value.wishes[index];
-                      cardContainerKeyList.add(GlobalKey());
-                      double valueOnStartDragProgress = 0;
-                      RxBool showSubtitle = true.obs;
-                      RxInt progressValue = 0.obs;
-                      progressValue.value = controller
-                          .init.user.value.wishes[index]['progress']
-                          .round();
-                      return Container(
-                        // margin: const EdgeInsets.symmetric(vertical: 2.5),
-                        decoration: DottedDecoration(
-                          shape: Shape.line,
-                          linePosition: LinePosition.top,
-                          dash: const <int>[16, 32],
-                        ),
-                        key: cardContainerKeyList[index],
-                        child: LayoutBuilder(builder: (context, constraints) {
-                          return Stack(
-                            children: [
-                              Obx(() => Positioned.fill(
-                                  right: (constraints.maxWidth / 100) *
-                                      (100 - progressValue.value.toDouble()),
-                                  child: Container(
-                                    color: progressColor(status, index),
-                                  ),
-                                ),
-                              ),
-                              Obx( () {
-                                return ExpansionTileCard(
-                                  onExpansionChanged: (isExpanded) {
-                                    showSubtitle.value = !isExpanded;
-                                  },
-                                  //finalPadding: EdgeInsets.zero,
-                                  duration: const Duration(milliseconds: 150),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(0.0)),
-                                  baseColor: tileColor(status, index),
-                                  shadowColor: Colors.transparent,
-                                  expandedColor:
-                                  tileColor(status, index),
-                                  //expandedTextColor: const Color(0xFF7A7A7A),
-                                  title: Text(
-                                    controller.init.user.value.wishes[index]
-                                    ['title'],
-                                    style: kTextStyleTaskTitle,
-                                  ),
-                                  subtitle: AnimatedOpacity(
-                                    opacity: showSubtitle == true? 1.0 : 0.0,
-                                    duration: const Duration(milliseconds: 100),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        Text(
-                                          'U:${updateDate.year}-${updateDate
-                                              .month}-${updateDate.day}',
-                                          style: kTextStyleTaskSubtitle,
-                                        ),
-                                        Text(
-                                          'C:${creationDate.year}-${creationDate
-                                              .month}-${creationDate.day}',
-                                          style: kTextStyleTaskSubtitle,
-                                        )
-                                      ],
+                          // We call updateWishesSort to update the database with the
+                          // new values of the user index
+                          await controller.updateWishesSort(
+                              controller.init.user.value.username,
+                              oldIndex,
+                              newIndex);
+                        },
+                      itemCount: controller.init.user.value.wishes.length,
+                      itemBuilder: (context, index) {
+                        DateTime creationDate =
+                            controller.init.user.value.wishes[index]['creation'];
+                        List historyOfiWish = controller.init.user.value.wishes[index]["history"];
+                        DateTime updateDate = historyOfiWish[historyOfiWish.length - 1]["when"];
+                        int status =
+                            controller.init.user.value.wishes[index]['status'];
+                        //var currentItem = controller.init.user.value.wishes[index];
+                        cardContainerKeyList.add(GlobalKey());
+                        cardExpansionKeyList.add(GlobalKey());
+                        double valueOnStartDragProgress = 0;
+                        RxBool showSubtitle = true.obs;
+                        RxInt progressValue = 0.obs;
+                        progressValue.value = controller
+                            .init.user.value.wishes[index]['progress']
+                            .round();
+                        Color sliderColor = kColorSliderBase;
+                        return Container(
+                          // margin: const EdgeInsets.symmetric(vertical: 2.5),
+                          decoration: DottedDecoration(
+                            shape: Shape.line,
+                            linePosition: LinePosition.top,
+                            dash: const <int>[16, 32],
+                          ),
+                          key: cardContainerKeyList[index],
+                          child: LayoutBuilder(builder: (context, constraints) {
+                            return Stack(
+                              children: [
+                                Obx(() => Positioned.fill(
+                                    right: (constraints.maxWidth / 100) *
+                                        (100 - progressValue.value.toDouble()),
+                                    child: Container(
+                                      color: progressColor(status, index),
                                     ),
                                   ),
-                                  children: [
-                                    Column(
-                                      children: [
-                                        // Buttons
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(0,0,0,16.0),
-                                          child: status ==
-                                              StatusItemWL.completed.index
-                                              ? null
-                                              : Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .spaceAround,
-                                            children: [
-                                              OutlinedButton(
-                                                onPressed: () async {
-                                                  await controller
-                                                      .pauseButtonPressed(
-                                                      status, index);
-                                                  await controller
-                                                      .init.user
-                                                      .refresh();
-                                                  Get.offNamed(
-                                                      '/loggedin',
-                                                      preventDuplicates:
-                                                      false);
-                                                },
-                                                style: null,
-                                                child: status == StatusItemWL.paused.index? Text('continue'.tr) : Text('pause'.tr),
-                                              ),
-                                              OutlinedButton(
-                                                onPressed: () async {
-                                                  await controller
-                                                      .abandonedButtonPressed(
-                                                      status, index);
-                                                  await controller
-                                                      .init.user
-                                                      .refresh();
-                                                  Get.offNamed(
-                                                      '/loggedin',
-                                                      preventDuplicates:
-                                                      false);
-                                                },
-                                                style: null,
-                                                child: status == StatusItemWL.abandoned.index? Text('continue'.tr) : Text('abandon'.tr),
-                                              ),
-                                            ],
+                                ),
+                                Obx( () {
+                                  return ExpansionTileCard(
+                                    key: cardExpansionKeyList[index],
+                                    onExpansionChanged: (isExpanded) {
+                                      showSubtitle.value = !isExpanded;
+                                    },
+                                    //finalPadding: EdgeInsets.zero,
+                                    duration: const Duration(milliseconds: 150),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(0.0)),
+                                    baseColor: tileColor(status, index),
+                                    shadowColor: Colors.transparent,
+                                    expandedColor:
+                                    tileColor(status, index),
+                                    //expandedTextColor: const Color(0xFF7A7A7A),
+                                    title: Text(
+                                      controller.init.user.value.wishes[index]
+                                      ['title'],
+                                      style: kTextStyleTaskTitle,
+                                    ),
+                                    subtitle: AnimatedOpacity(
+                                      opacity: showSubtitle == true? 1.0 : 0.0,
+                                      duration: const Duration(milliseconds: 100),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Text(
+                                            'U:${updateDate.year}-${updateDate
+                                                .month}-${updateDate.day}',
+                                            style: kTextStyleTaskSubtitle,
                                           ),
-                                        ),
-                                        // Slider and percentage
-                                        Column(
-                                          children: [
-                                            SizedBox(
-                                              height: 48,
-                                              width: constraints.maxWidth - 1,
-                                              child: Stack(
-                                                children: [
-                                                  Obx(() =>
-                                                      Positioned(
-                                                        top: 0,
-                                                        right: sliderHPosAndConstraints(constraints, progressValue),
-                                                        child: Row(
-                                                          children: [
-                                                            Container(
-                                                              height: 32,
-                                                              width: 8,
-                                                              color: Colors
-                                                                  .black,
-                                                              child: GestureDetector(
-                                                                dragStartBehavior: DragStartBehavior
-                                                                    .down,
-                                                                onTap: () {
-                                                                  //showSubtitle.value = cardKeyList[index].currentState?.mounted as bool;
-                                                                },
-                                                                onHorizontalDragUpdate: (details) {
-                                                                  // We read the progressValue settled when dragging started and use it to update
-                                                                  // with current delta from last tick
-                                                                  valueOnStartDragProgress = valueOnStartDragProgress + details.primaryDelta!;
-                                                                  // We verify constrains
-                                                                  double finalValue = valueOnStartDragProgress;
-                                                                  if (valueOnStartDragProgress < 0) {
-                                                                    finalValue = 0;
-                                                                  }
-                                                                  if (valueOnStartDragProgress > constraints.maxWidth) {
-                                                                    finalValue = constraints.maxWidth;
-                                                                  }
-                                                                  progressValue.value = (finalValue / constraints.maxWidth * 100).toInt();
-                                                                },
-                                                                onHorizontalDragStart: (
-                                                                    details) {
-                                                                  valueOnStartDragProgress =
-                                                                      details
-                                                                          .localPosition
-                                                                          .dx +
-                                                                          ((constraints
-                                                                              .maxWidth /
-                                                                              100) *
-                                                                              progressValue
-                                                                                  .value);
-                                                                },
-                                                                onHorizontalDragEnd: (details) async {
-                                                                  var endVal = progressValue.value;
-                                                                  await controller
-                                                                      .updateProgress(
-                                                                      endVal
-                                                                          .roundToDouble(),
-                                                                      index);
-                                                                  await controller.init.user
-                                                                      .refresh();
-                                                                  progressValue.value =
-                                                                      endVal.round();
-                                                                  if (endVal == 100) {
-                                                                    Get.offNamed(
-                                                                        '/loggedin',
-                                                                        preventDuplicates:
-                                                                        false);
-                                                                  }
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                  ),
-                                                ],
-                                              ),
+                                          Text(
+                                            'C:${creationDate.year}-${creationDate
+                                                .month}-${creationDate.day}',
+                                            style: kTextStyleTaskSubtitle,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    children: [
+                                      Column(
+                                        children: [
+                                          // Buttons
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(0,0,0,16.0),
+                                            child: status ==
+                                                StatusItemWL.completed.index
+                                                ? null
+                                                : Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceAround,
+                                              children: [
+                                                OutlinedButton(
+                                                  onPressed: () async {
+                                                    await controller
+                                                        .pauseButtonPressed(
+                                                        status, index);
+                                                    await controller
+                                                        .init.user
+                                                        .refresh();
+                                                    Get.offNamed(
+                                                        '/loggedin',
+                                                        preventDuplicates:
+                                                        false);
+                                                  },
+                                                  style: null,
+                                                  child: status == StatusItemWL.paused.index? Text('continue'.tr) : Text('pause'.tr),
+                                                ),
+                                                OutlinedButton(
+                                                  onPressed: () async {
+                                                    await controller
+                                                        .abandonedButtonPressed(
+                                                        status, index);
+                                                    await controller
+                                                        .init.user
+                                                        .refresh();
+                                                    Get.offNamed(
+                                                        '/loggedin',
+                                                        preventDuplicates:
+                                                        false);
+                                                  },
+                                                  style: null,
+                                                  child: status == StatusItemWL.abandoned.index? Text('continue'.tr) : Text('abandon'.tr),
+                                                ),
+                                              ],
                                             ),
-                                            Obx(() =>
-                                                Text(progressValue.value
-                                                    .toString())),
-                                            /*Obx(
-                                                  () =>
-                                                  Slider(
-                                                    min: 0,
-                                                    max: 100,
-                                                    divisions: 100,
-                                                    value: progressValue.value
-                                                        .toDouble(),
-                                                    onChangeEnd: (
-                                                        endVal) async {
-                                                      await controller
-                                                          .updateProgress(
-                                                          endVal
-                                                              .roundToDouble(),
-                                                          index);
-                                                      await controller.init.user
-                                                          .refresh();
-                                                      progressValue.value =
-                                                          endVal.round();
-                                                      if (endVal == 100) {
-                                                        Get.offNamed(
-                                                            '/loggedin',
-                                                            preventDuplicates:
-                                                            false);
-                                                      }
-                                                    },
-                                                    onChanged: (val) {
-                                                      progressValue.value =
-                                                          val.round();
-                                                    },
-                                                  ),
-                                            ),*/
-                                          ],
-                                        ),
-                                        // Bottom Items
-                                        Container(
-                                          margin: kMarginHorizontal,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                          ),
+                                          // Slider and percentage
+                                          Column(
                                             children: [
-                                              OutlinedButton(
-                                                onPressed: () {
-                                                  Get.to(() =>
-                                                      HistoryPage(
-                                                        log: controller
-                                                            .init
-                                                            .user
-                                                            .value
-                                                            .wishes[index]
-                                                        ['history'],
-                                                      ));
-                                                },
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment
-                                                      .start,
+                                              SizedBox(
+                                                height: 48,
+                                                width: constraints.maxWidth - 1,
+                                                child: Stack(
                                                   children: [
-                                                    Text(
-                                                      'U:${updateDate.year}-${updateDate
-                                                          .month}-${updateDate.day}',
-                                                      style: kTextStyleTaskSubtitle,
+                                                    Obx(() =>
+                                                        Positioned(
+                                                          top: 0,
+                                                          right: sliderHPosAndConstraints(constraints, progressValue),
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                color: sliderColor),
+                                                                height: 32,
+                                                                width: 8,
+                                                                child: GestureDetector(
+                                                                  dragStartBehavior: DragStartBehavior
+                                                                      .down,
+                                                                  onTap: () {
+                                                                    //showSubtitle.value = cardKeyList[index].currentState?.mounted as bool;
+                                                                  },
+                                                                  onHorizontalDragUpdate: (details) {
+                                                                    // We read the progressValue settled when dragging started and use it to update
+                                                                    // with current delta from last tick
+                                                                    valueOnStartDragProgress = valueOnStartDragProgress + details.primaryDelta!;
+                                                                    // We verify constrains
+                                                                    double finalValue = valueOnStartDragProgress;
+                                                                    if (valueOnStartDragProgress < 0) {
+                                                                      finalValue = 0;
+                                                                    }
+                                                                    if (valueOnStartDragProgress > constraints.maxWidth) {
+                                                                      finalValue = constraints.maxWidth;
+                                                                    }
+                                                                    progressValue.value = (finalValue / constraints.maxWidth * 100).toInt();
+                                                                  },
+                                                                  onHorizontalDragStart: (
+                                                                      details) {
+                                                                    sliderColor = kColorSliderDragged;
+                                                                    valueOnStartDragProgress =
+                                                                        details
+                                                                            .localPosition
+                                                                            .dx +
+                                                                            ((constraints
+                                                                                .maxWidth /
+                                                                                100) *
+                                                                                progressValue
+                                                                                    .value);
+                                                                  },
+                                                                  onHorizontalDragEnd: (details) async {
+                                                                    sliderColor = kColorSliderBase;
+                                                                    var endVal = progressValue.value;
+                                                                    await controller
+                                                                        .updateProgress(
+                                                                        endVal
+                                                                            .roundToDouble(),
+                                                                        index);
+                                                                    await controller.init.user
+                                                                        .refresh();
+                                                                    progressValue.value =
+                                                                        endVal.round();
+                                                                    if (endVal == 100) {
+                                                                      Get.offNamed(
+                                                                          '/loggedin',
+                                                                          preventDuplicates:
+                                                                          false);
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
                                                     ),
-                                                    Text(
-                                                      'C:${creationDate.year}-${creationDate
-                                                          .month}-${creationDate.day}',
-                                                      style: kTextStyleTaskSubtitle,
-                                                    )
                                                   ],
                                                 ),
                                               ),
-                                              InkWell(
-                                                child: const Icon(EvaIcons.trashOutline),
-                                                //style: TextButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                                                onTap: () async {
-                                                  await controller
-                                                      .deleteWish(index);
-                                                  controller.init.user.refresh();
-                                                },
-                                              )
+                                              Obx(() =>
+                                                  Text(progressValue.value
+                                                      .toString())),
+                                              /*Obx(
+                                                    () =>
+                                                    Slider(
+                                                      min: 0,
+                                                      max: 100,
+                                                      divisions: 100,
+                                                      value: progressValue.value
+                                                          .toDouble(),
+                                                      onChangeEnd: (
+                                                          endVal) async {
+                                                        await controller
+                                                            .updateProgress(
+                                                            endVal
+                                                                .roundToDouble(),
+                                                            index);
+                                                        await controller.init.user
+                                                            .refresh();
+                                                        progressValue.value =
+                                                            endVal.round();
+                                                        if (endVal == 100) {
+                                                          Get.offNamed(
+                                                              '/loggedin',
+                                                              preventDuplicates:
+                                                              false);
+                                                        }
+                                                      },
+                                                      onChanged: (val) {
+                                                        progressValue.value =
+                                                            val.round();
+                                                      },
+                                                    ),
+                                              ),*/
                                             ],
                                           ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                );
-                              }
-                              ),
-                            ],
-                          );
-                        }),
-                      );
-                    },
+                                          // Bottom Items
+                                          Container(
+                                            margin: kMarginHorizontal,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                OutlinedButton(
+                                                  onPressed: () {
+                                                    Get.to(() =>
+                                                        HistoryPage(
+                                                          log: controller
+                                                              .init
+                                                              .user
+                                                              .value
+                                                              .wishes[index]
+                                                          ['history'],
+                                                        ));
+                                                  },
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment
+                                                        .start,
+                                                    children: [
+                                                      Text(
+                                                        'U:${updateDate.year}-${updateDate
+                                                            .month}-${updateDate.day}',
+                                                        style: kTextStyleTaskSubtitle,
+                                                      ),
+                                                      Text(
+                                                        'C:${creationDate.year}-${creationDate
+                                                            .month}-${creationDate.day}',
+                                                        style: kTextStyleTaskSubtitle,
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  child: const Icon(EvaIcons.trashOutline),
+                                                  //style: TextButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                                                  onTap: () async {
+                                                    cardExpansionKeyList[index].currentState?.collapse();
+                                                    await controller
+                                                        .deleteWish(index);
+                                                    controller.init.user.refresh();
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  );
+                                }
+                                ),
+                              ],
+                            );
+                          }),
+                        );
+                      },
+                  ),
                 ),
               ),
             ],
@@ -394,10 +403,10 @@ class LoggedInPage extends GetView<LoggedInController> {
                 ),
                 confirm: TextButton(
                     onPressed: () async {
-                      Get.back();
                       await controller.newWish(newWishInput);
                       await controller.loadWishes();
-                      controller.init.user.refresh();
+                      await controller.init.user.refresh();
+                      Get.back();
                     },
                     child: const Text('Send')));
           },
