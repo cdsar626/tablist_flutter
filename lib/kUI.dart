@@ -25,3 +25,9 @@ TextStyle kTextStyleTaskSubtitle = const TextStyle(
   fontSize: 10,
   color: Colors.black45,
 );
+
+InputBorder kInputBorder = const OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(5)),
+    borderSide: BorderSide(
+      color: Colors.lightBlueAccent,
+    ));

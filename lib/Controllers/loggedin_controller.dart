@@ -20,9 +20,18 @@ class LoggedInController extends GetxController {
     );
   }
 
-  Future<void> newWish(String newWishTitle) async {
+  Future<void> newWish(String newWishTitle, String newWishSteps) async {
+    int? steps = int.tryParse(newWishSteps);
+    if (steps == null) {
+      print("Error parsing steps");
+      return;
+    }
     await UserDataBridge(init.mongoDB).addNewWish(
-        newWishTitle, init.user.value.username, init.user.value.wishes.length);
+        newWishTitle,
+        init.user.value.username,
+        init.user.value.wishes.length,
+        steps,
+    );
   }
 
   Future<void> deleteWish(int index) async {
@@ -83,8 +92,8 @@ class LoggedInController extends GetxController {
     }
   }
 
- Future<void> updateProgress(double endVal, int index) async {
-     await UserDataBridge(init.mongoDB).updateProgress(endVal, index, init.user.value.username);
+ Future<void> updateProgress(double endVal, int index, int maxSteps) async {
+     await UserDataBridge(init.mongoDB).updateProgress(endVal, index, init.user.value.username, maxSteps);
      await loadWishes();
   }
 

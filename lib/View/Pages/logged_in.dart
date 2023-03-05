@@ -1,4 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 import 'package:tablist_app/Controllers/loggedin_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:tablist_app/Models/status_item_wl.dart';
@@ -7,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:tablist_app/View/Pages/history.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
+import 'package:material_dialogs/material_dialogs.dart';
 
 import 'package:tablist_app/kUI.dart';
 
@@ -18,6 +21,9 @@ class LoggedInPage extends GetView<LoggedInController> {
     final List<GlobalKey<ExpansionTileCardState>> cardContainerKeyList = [];
     final List<GlobalKey<ExpansionTileCardState>> cardExpansionKeyList = [];
     String newWishInput = '';
+    TextEditingController newWishInputController = TextEditingController();
+    String newWishSteps = '';
+    TextEditingController newWishStepsController = TextEditingController();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -34,13 +40,13 @@ class LoggedInPage extends GetView<LoggedInController> {
               )),
         ),
         body: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+          margin: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: ElevatedButton(
-                  onPressed: null,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 24.0),
                   child: Center(
                     child: Column(
                       children: [
@@ -102,6 +108,8 @@ class LoggedInPage extends GetView<LoggedInController> {
                             .init.user.value.wishes[index]['progress']
                             .round();
                         Color sliderColor = kColorSliderBase;
+                        //if wish have no steps defaults to 100
+                        int maxSteps = controller.init.user.value.wishes[index]['steps']??100;
                         return Container(
                           // margin: const EdgeInsets.symmetric(vertical: 2.5),
                           decoration: DottedDecoration(
@@ -113,9 +121,10 @@ class LoggedInPage extends GetView<LoggedInController> {
                           child: LayoutBuilder(builder: (context, constraints) {
                             return Stack(
                               children: [
+                                // Add a new background color filled until percent completed
                                 Obx(() => Positioned.fill(
-                                    right: (constraints.maxWidth / 100) *
-                                        (100 - progressValue.value.toDouble()),
+                                    right: (constraints.maxWidth / maxSteps) *
+                                        (maxSteps - progressValue.value.toDouble()),
                                     child: Container(
                                       color: progressColor(status, index),
                                     ),
@@ -142,7 +151,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                       style: kTextStyleTaskTitle,
                                     ),
                                     subtitle: AnimatedOpacity(
-                                      opacity: showSubtitle == true? 1.0 : 0.0,
+                                      opacity: showSubtitle.value == true? 1.0 : 0.0,
                                       duration: const Duration(milliseconds: 100),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment
@@ -219,9 +228,10 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                 child: Stack(
                                                   children: [
                                                     Obx(() =>
+                                                    // Custom slider positioned respect percentage completed
                                                         Positioned(
                                                           top: 0,
-                                                          right: sliderHPosAndConstraints(constraints, progressValue),
+                                                          right: sliderHPosAndConstraints(constraints, progressValue, maxSteps),
                                                           child: Row(
                                                             children: [
                                                               Container(
@@ -248,7 +258,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                                     if (valueOnStartDragProgress > constraints.maxWidth) {
                                                                       finalValue = constraints.maxWidth;
                                                                     }
-                                                                    progressValue.value = (finalValue / constraints.maxWidth * 100).toInt();
+                                                                    progressValue.value = (finalValue / constraints.maxWidth * maxSteps).toInt();
                                                                   },
                                                                   onHorizontalDragStart: (
                                                                       details) {
@@ -259,7 +269,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                                             .dx +
                                                                             ((constraints
                                                                                 .maxWidth /
-                                                                                100) *
+                                                                                maxSteps) *
                                                                                 progressValue
                                                                                     .value);
                                                                   },
@@ -270,12 +280,12 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                                         .updateProgress(
                                                                         endVal
                                                                             .roundToDouble(),
-                                                                        index);
+                                                                        index, maxSteps);
                                                                     await controller.init.user
                                                                         .refresh();
                                                                     progressValue.value =
                                                                         endVal.round();
-                                                                    if (endVal == 100) {
+                                                                    if (endVal == maxSteps) {
                                                                       Get.offNamed(
                                                                           '/loggedin',
                                                                           preventDuplicates:
@@ -291,9 +301,40 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                   ],
                                                 ),
                                               ),
-                                              Obx(() =>
-                                                  Text(progressValue.value
-                                                      .toString())),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  status != StatusItemWL.completed.index && progressValue > 0? OutlinedButton(
+                                                    onPressed: () async {
+                                                      await controller
+                                                          .updateProgress(
+                                                          progressValue.value - 1
+                                                              .roundToDouble(),
+                                                          index, maxSteps);
+                                                      await controller.init.user
+                                                          .refresh();
+                                                    },
+                                                    child: const Text("-"),
+                                                  ): const SizedBox(),
+                                                  const SizedBox(width: 10,),
+                                                  Obx(() =>
+                                                      Text("${progressValue.value}/$maxSteps")),
+                                                  const SizedBox(width: 10,),
+                                                  progressValue < maxSteps? OutlinedButton(
+                                                    onPressed: () async {
+                                                      await controller
+                                                          .updateProgress(
+                                                          progressValue.value + 1
+                                                              .roundToDouble(),
+                                                          index, maxSteps);
+                                                      await controller.init.user
+                                                          .refresh();
+                                                    },
+                                                    child: const Text("+"),
+                                                  ):const SizedBox(),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 4,),
                                               /*Obx(
                                                     () =>
                                                     Slider(
@@ -339,6 +380,8 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                   onPressed: () {
                                                     Get.to(() =>
                                                         HistoryPage(
+                                                          title: controller.init.user.value.wishes[index]
+                                                          ['title'],
                                                           log: controller
                                                               .init
                                                               .user
@@ -368,10 +411,44 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                   child: const Icon(EvaIcons.trashOutline),
                                                   //style: TextButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                                                   onTap: () async {
-                                                    cardExpansionKeyList[index].currentState?.collapse();
-                                                    await controller
-                                                        .deleteWish(index);
-                                                    controller.init.user.refresh();
+                                                    Dialogs.materialDialog(context: context,
+                                                    title: "delete_wish".tr,
+                                                    msg: "cant_undone".tr,
+                                                        // onClose: (val) {print("closed from $val");},
+                                                        actions: [
+                                                          IconsOutlineButton(
+                                                            onPressed: () {
+                                                              //Navigator.of(context, rootNavigator: true).pop();
+                                                              Get.back();
+                                                            },
+                                                            text: 'cancel'.tr,
+                                                            iconData: Icons.cancel_outlined,
+                                                            textStyle: const TextStyle(color: Colors.grey),
+                                                            iconColor: Colors.grey,
+                                                          ),
+                                                          IconsButton(
+                                                            onPressed: () async {
+                                                              Get.back();
+                                                              await controller
+                                                                  .deleteWish(index);
+                                                              cardExpansionKeyList[index].currentState?.collapse();
+                                                              await controller.init.user.refresh();
+                                                              Get.offNamed(
+                                                                  '/loggedin',
+                                                                  preventDuplicates:
+                                                                  false);
+
+                                                            },
+                                                            text: "delete".tr,
+                                                            iconData: Icons.delete,
+                                                            color: Colors.red,
+                                                            textStyle: const TextStyle(color: Colors.white),
+                                                            iconColor: Colors.white,
+                                                          ),
+                                                        ]
+
+                                                    );
+
                                                   },
                                                 )
                                               ],
@@ -396,19 +473,100 @@ class LoggedInPage extends GetView<LoggedInController> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            Get.defaultDialog(
-                title: 'Add new wish',
-                content: TextField(
-                  onChanged: (value) => newWishInput = value,
-                ),
-                confirm: TextButton(
-                    onPressed: () async {
-                      await controller.newWish(newWishInput);
-                      await controller.loadWishes();
-                      await controller.init.user.refresh();
-                      Get.back();
-                    },
-                    child: const Text('Send')));
+            RxList<Widget> moreData = <Widget>[].obs;
+            RxBool showExtra = true.obs;
+            Dialogs.materialDialog(context: context,
+            dialogShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            title: "add_new_wish".tr,
+              actions: [
+                Obx(
+                  () => Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: [
+                      TextField(
+                        onChanged: (value) => newWishInput = value,
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "new_wish".tr,
+                          contentPadding: const EdgeInsets.all(10),
+                          border: kInputBorder,
+                        ),
+                      ),
+                      Obx(
+                        () => Column(
+                          children: moreData,
+                        ),
+                      ),
+                      showExtra.value? IconsOutlineButton(onPressed: () {
+                        // Add custom data to new wish
+                        moreData.add(
+                          TextField(
+                            controller: newWishStepsController,
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                            onChanged: (value) {
+                              newWishSteps = value;
+                              var valueParsed = int.tryParse(newWishSteps);
+                              print(valueParsed);
+                              if(valueParsed==null){
+                                newWishStepsController.text = '';
+                                newWishSteps = '';
+                              } else if(valueParsed > 256){
+                                newWishStepsController.text = 'Oye tranquilo viejo';
+                                newWishSteps = '';
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "new_steps".tr,
+                              contentPadding: const EdgeInsets.all(5),
+                              border: kInputBorder,
+                            )
+                        ),
+                        );
+                        showExtra.value = false;
+                      }, text: "custom_data".tr, iconData: EvaIcons.plus) : const SizedBox(),
+                      IconsOutlineButton(
+                        onPressed: () async {
+                          var valueParsed = int.tryParse(newWishSteps);
+                          if(newWishInput == "") {
+                            print("No title to new wish");
+                            Get.back();
+                            return;
+                          }
+                          if (valueParsed == null) {
+                            newWishSteps = "100"; //default value
+                            print("Steps not accepted. defaulting to 100");
+                          }
+                          await controller.newWish(newWishInput, newWishSteps);
+                          await controller.loadWishes();
+                          await controller.init.user.refresh();
+                          Get.back();
+                        },
+                          text: "add_wish".tr
+                      ),
+                    ],
+                  ),
+                )
+              ]
+
+            );
+            // Get.defaultDialog(
+            //     title: 'Add new wish',
+            //     content: TextField(
+            //       onChanged: (value) => newWishInput = value,
+            //     ),
+            //     confirm: TextButton(
+            //         onPressed: () async {
+            //           await controller.newWish(newWishInput);
+            //           await controller.loadWishes();
+            //           await controller.init.user.refresh();
+            //           Get.back();
+            //         },
+            //         child: const Text('Send')));
           },
           child: const Icon(Icons.add),
         ),
@@ -463,9 +621,10 @@ void reorderLocalWishesList(oldIndex, newIndex, controller) {
   controller.init.user.value.wishes.insert(newIndex, item);
 }
 
-double sliderHPosAndConstraints(constraints, progressValue) {
+double sliderHPosAndConstraints(constraints, progressValue, maxSteps) {
   // Calculate H pos of slider in percentage in reference to max with of container
-  var calc = (constraints.maxWidth / 100) * ((99 - progressValue.value.toDouble())) + 1;
+  // -4 because size of pill is 8 and this center it
+  var calc = (constraints.maxWidth / maxSteps) * ((maxSteps - progressValue.value.toDouble())) + -4;
   double sliderSize = 8;
   if (calc > (constraints.maxWidth - sliderSize)) {
     return constraints.maxWidth - sliderSize;
@@ -476,7 +635,7 @@ double sliderHPosAndConstraints(constraints, progressValue) {
   }
 }
 
-//Bug for some reason, it dont work as inline
+//Bug for some reason, it don't work as inline
 /*
 void onDragSliderUpdate(details, constraints,double valueOnStartDragProgress,RxInt progressValue) {
   // We read the progressValue settled when dragging started and use it to update

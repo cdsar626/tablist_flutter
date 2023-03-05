@@ -38,7 +38,7 @@ class UserDataBridge extends DB {
   }
 
   Future<void> addNewWish(
-      String title, String username, int currentWishesLength) async {
+      String title, String username, int currentWishesLength, int steps) async {
     await collWishes.insert({
       'owner': username,
       'title': title,
@@ -46,6 +46,7 @@ class UserDataBridge extends DB {
       'comments': '',
       'status': StatusItemWL.active.index,
       'progress': 0,
+      'steps': steps,
       'history': [
         {
           'when': DateTime.now(),
@@ -142,8 +143,8 @@ class UserDataBridge extends DB {
     ]);
   }
 
-  Future<void> updateProgress(double endVal, int index, username) async {
-    // We update status to complete if endVal is 100
+  Future<void> updateProgress(double endVal, int index, username, int maxSteps) async {
+    // We update status to complete if endVal is ~100~ maxSteps
     // We also update progress to endVal
     // And add this update to history
     await collWishes.updateOne({
@@ -152,7 +153,7 @@ class UserDataBridge extends DB {
     }, [
       {
         '\$set': {
-          'status': endVal == 100? StatusItemWL.completed.index : '\$status',
+          'status': endVal == maxSteps? StatusItemWL.completed.index : '\$status',
           'progress': endVal,
           'history': {
             '\$concatArrays': [

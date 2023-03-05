@@ -24,7 +24,7 @@ void main() async{
           getPages: [
             GetPage(name: '/home', page: () => const HomePage(), binding: HomeBinding(init)),
             GetPage(name: '/loggedin', page: () => const LoggedInPage(), binding: LoggedInBinding(init)),
-            GetPage(name: '/history', page: () => const HistoryPage(log: [],), binding: HistoryBinding(init)),
+            GetPage(name: '/history', page: () => const HistoryPage(log: [], title: ""), binding: HistoryBinding(init)),
           ],
         );
       } else {
