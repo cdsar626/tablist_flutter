@@ -476,6 +476,12 @@ class LoggedInPage extends GetView<LoggedInController> {
             RxList<Widget> moreData = <Widget>[].obs;
             RxBool showExtra = true.obs;
             Dialogs.materialDialog(context: context,
+            onClose: (value) {
+              newWishSteps = '';
+              newWishInput = '';
+              newWishStepsController.clear();
+              newWishInputController.clear();
+            },
             dialogShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             title: "add_new_wish".tr,
               actions: [
@@ -485,6 +491,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                     runSpacing: 8.0,
                     children: [
                       TextField(
+                        controller: newWishInputController,
                         onChanged: (value) => newWishInput = value,
                         style: const TextStyle(
                           fontSize: 12,
@@ -497,7 +504,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                       ),
                       Obx(
                         () => Column(
-                          children: moreData,
+                          children: moreData.isNotEmpty? moreData : [],
                         ),
                       ),
                       showExtra.value? IconsOutlineButton(onPressed: () {
@@ -511,9 +518,9 @@ class LoggedInPage extends GetView<LoggedInController> {
                             onChanged: (value) {
                               newWishSteps = value;
                               var valueParsed = int.tryParse(newWishSteps);
-                              print(valueParsed);
+                              //print(valueParsed);
                               if(valueParsed==null){
-                                newWishStepsController.text = '';
+                                newWishStepsController.clear();
                                 newWishSteps = '';
                               } else if(valueParsed > 256){
                                 newWishStepsController.text = 'Oye tranquilo viejo';
@@ -533,13 +540,13 @@ class LoggedInPage extends GetView<LoggedInController> {
                         onPressed: () async {
                           var valueParsed = int.tryParse(newWishSteps);
                           if(newWishInput == "") {
-                            print("No title to new wish");
+                            //print("No title to new wish");
                             Get.back();
                             return;
                           }
                           if (valueParsed == null) {
                             newWishSteps = "100"; //default value
-                            print("Steps not accepted. defaulting to 100");
+                            //print("Steps not accepted. defaulting to 100");
                           }
                           await controller.newWish(newWishInput, newWishSteps);
                           await controller.loadWishes();
