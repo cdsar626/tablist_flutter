@@ -78,12 +78,10 @@ class LoggedInPage extends GetView<LoggedInController> {
                           } else {
 
                           }
-
                           reorderLocalWishesList(oldIndex, newIndex, controller);
                           // To keep current state of expanded/collapsed when reordering
                           cardContainerKeyList.insert(
                               newIndex, cardContainerKeyList.removeAt(oldIndex));
-
                           // We call updateWishesSort to update the database with the
                           // new values of the user index
                           await controller.updateWishesSort(
@@ -109,6 +107,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                             .init.user.value.wishes[index]['progress']
                             .round();
                         Color sliderColor = kColorSliderBase;
+                        List categories = controller.init.user.value.wishes[index]["categories"]??[];
                         //if wish have no steps defaults to 100
                         int maxSteps = controller.init.user.value.wishes[index]['steps']??100;
                         return Container(
@@ -393,6 +392,12 @@ class LoggedInPage extends GetView<LoggedInController> {
                                               MainAxisAlignment.spaceBetween,
                                               children: [
                                                 OutlinedButton(
+                                                  onLongPress: () {
+                                                    Get.snackbar(
+                                                        "Categories",
+                                                        categories.join(", "),
+                                                    snackPosition: SnackPosition.BOTTOM);
+                                                  },
                                                   onPressed: () {
                                                     Get.to(() =>
                                                         HistoryPage(
