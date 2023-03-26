@@ -63,6 +63,7 @@ class LoggedInPage extends GetView<LoggedInController> {
               child: const Icon(
                 EvaIcons.logOut,
                 size: 40,
+                color: Colors.white,
               )),
         ),
         body: Container(
