@@ -24,6 +24,7 @@ class LoggedInPage extends GetView<LoggedInController> {
     TextEditingController newWishInputController = TextEditingController();
     String newWishSteps = '';
     TextEditingController newWishStepsController = TextEditingController();
+    RxBool asyncLoading = false.obs;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -551,24 +552,31 @@ class LoggedInPage extends GetView<LoggedInController> {
                         );
                         showExtra.value = false;
                       }, text: "custom_data".tr, iconData: EvaIcons.plus) : const SizedBox(),
-                      IconsOutlineButton(
-                        onPressed: () async {
-                          var valueParsed = int.tryParse(newWishSteps);
-                          if(newWishInput == "") {
-                            //print("No title to new wish");
+                      Visibility(
+                        visible: !asyncLoading.value,
+                        replacement: const LinearProgressIndicator(),
+                        child: IconsOutlineButton(
+                          onPressed: () async {
+                            var valueParsed = int.tryParse(newWishSteps);
+                            if(newWishInput == "") {
+                              //print("No title to new wish");
+                              Get.back();
+                              return;
+                            }
+                            if (valueParsed == null) {
+                              newWishSteps = "100"; //default value
+                              //print("Steps not accepted. defaulting to 100");
+                            }
+
+                            asyncLoading.value = true;
+                            await controller.newWish(newWishInput, newWishSteps);
+                            await controller.loadWishes();
+                            await controller.init.user.refresh();
+                            asyncLoading.value = false;
                             Get.back();
-                            return;
-                          }
-                          if (valueParsed == null) {
-                            newWishSteps = "100"; //default value
-                            //print("Steps not accepted. defaulting to 100");
-                          }
-                          await controller.newWish(newWishInput, newWishSteps);
-                          await controller.loadWishes();
-                          await controller.init.user.refresh();
-                          Get.back();
-                        },
-                          text: "add_wish".tr
+                          },
+                            text: "add_wish".tr
+                        ),
                       ),
                     ],
                   ),
