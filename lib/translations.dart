@@ -24,6 +24,7 @@ class AppTranslations extends Translations {
       'new_steps': 'Steps needed to complete (default 100)',
       'custom_data': 'Custom data',
       'add_wish': 'Add Wish',
+      'load_cats_explanation': 'Load categories for each wish, only needed once',
     },
     'es': {
       'init': 'Inicializando',
@@ -46,6 +47,8 @@ class AppTranslations extends Translations {
       'new_steps': 'Pasos para completar (por defecto 100)',
       'custom_data': 'Personalizar',
       'add_wish': 'Agregar deseo',
+      'load_cats_explanation': 'Cargar categorías para cada deseo, solo es necesario una vez'
+
     },
     'fr': {
       'init': 'Initialisation en cours',
@@ -68,6 +71,8 @@ class AppTranslations extends Translations {
       'new_steps': 'Étapes nécessaires pour compléter (par défaut 100)',
       'custom_data': 'Données personnalisées',
       'add_wish': 'Ajouter un souhait',
+      'load_cats_explanation': 'Charger les catégories pour chaque souhait, nécessaire une seule fois'
+
     }
 
   };

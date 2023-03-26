@@ -50,7 +50,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                       preventDuplicates:
                       false);
                 },
-                    tooltip: "Load categories for each wish, only needed once",
+                    tooltip: "load_cats_explanation".tr,
                     icon: const Icon(EvaIcons.refreshOutline)),
               ),
             )
