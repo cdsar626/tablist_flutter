@@ -1,6 +1,8 @@
 import 'package:tablist_app/Models/status_item_wl.dart';
 import 'package:tablist_app/init.dart';
 import 'package:get/get.dart';
+import 'package:tablist_app/openai_conf.dart';
+import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 
 import '../Models/User.dart';
 import '../Data/user_data_bridge.dart';
@@ -21,16 +23,42 @@ class LoggedInController extends GetxController {
   }
 
   Future<void> newWish(String newWishTitle, String newWishSteps) async {
+    List<String> categories = [];
     int? steps = int.tryParse(newWishSteps);
     if (steps == null) {
       print("Error parsing steps");
       return;
     }
+
+    Future<void> chatCompleteWithSSE() async {
+      final request = ChatCompleteText(messages: [
+        Map.of({
+          "role": "system",
+          "content": "You are a AI that could answer with 10 keywords related to a task from a to-do list. I will send you the task title and you will reply only and exclusively with 10 keywords, no more, no less, comma separated. The first keyword is what is about the task, like title of movie or title of anime, sport name, etc. In the next 2-3 keywords categorize what try to achieve the task and include it in the keywords, for example if it is a serie or a videogame or anime, or what kind of other activity it is."
+          },
+        ),
+        Map.of({
+          "role": "user",
+          "content": newWishTitle,
+          },
+        ),
+
+      ], maxToken: 300, model: kChatGptTurboModel);
+
+      var body = await openAI.onChatCompletion(request: request);
+      var reply = body?.choices.first.message.content;
+      categories = reply?.split(",")??[];
+    }
+
+    await chatCompleteWithSSE();
+
+
     await UserDataBridge(init.mongoDB).addNewWish(
         newWishTitle,
         init.user.value.username,
         init.user.value.wishes.length,
         steps,
+        categories,
     );
   }
 

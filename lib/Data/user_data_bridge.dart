@@ -38,7 +38,7 @@ class UserDataBridge extends DB {
   }
 
   Future<void> addNewWish(
-      String title, String username, int currentWishesLength, int steps) async {
+      String title, String username, int currentWishesLength, int steps, List<String> categories) async {
     await collWishes.insert({
       'owner': username,
       'title': title,
@@ -47,6 +47,7 @@ class UserDataBridge extends DB {
       'status': StatusItemWL.active.index,
       'progress': 0,
       'steps': steps,
+      'categories': categories,
       'history': [
         {
           'when': DateTime.now(),
