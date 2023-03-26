@@ -47,5 +47,28 @@ class AppTranslations extends Translations {
       'custom_data': 'Personalizar',
       'add_wish': 'Agregar deseo',
     },
+    'fr': {
+      'init': 'Initialisation en cours',
+      'username': 'Nom d\'utilisateur',
+      'log_in' : 'Se connecter',
+      'happy_msg01': 'Bonjour @username, passez une belle journée. :)',
+      'log_out': 'Appuyez ici pour vous déconnecter.',
+      'pause': 'Pause',
+      'abandon': 'Abandonner',
+      'continue': 'Continuer',
+      'progress': 'Progression : @num',
+      'historyProgressUpdate': 'La progression a été mise à jour à @progress',
+      'historyStatusUpdate': 'Statut mis à jour : @status',
+      'delete_wish': 'Supprimer le souhait',
+      'cant_undone': 'Cette action est irréversible',
+      'cancel': 'Annuler',
+      'delete': 'Supprimer',
+      'add_new_wish': 'Ajouter un nouveau souhait',
+      'new_wish': 'Nouveau souhait',
+      'new_steps': 'Étapes nécessaires pour compléter (par défaut 100)',
+      'custom_data': 'Données personnalisées',
+      'add_wish': 'Ajouter un souhait',
+    }
+
   };
 }

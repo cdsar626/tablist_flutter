@@ -18,7 +18,8 @@ void main() async{
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.done){
         return GetMaterialApp(
-          locale: const Locale('en'),
+          //locale: const Locale('es'),
+          locale: Locale(Get.deviceLocale?.languageCode??'en'),
           translations: AppTranslations(),
           initialRoute: init.user.value.username == ''? '/home' : '/loggedin',
           getPages: [

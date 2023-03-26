@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:tablist_app/Controllers/history_controller.dart';
 import 'package:get/get.dart';
 import 'package:tablist_app/Models/status_item_wl.dart';
@@ -12,9 +13,12 @@ class HistoryPage extends GetView<HistoryController> {
   final List log;
   final String title;
 
+
+
   @override
   Widget build(BuildContext context) {
     int skipIndex = 0;
+    initializeDateFormatting();
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
@@ -96,7 +100,7 @@ class CardHistory extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(DateFormat('yyyy-MM-dd').format(when.toLocal()).toString(),
+            Text('${DateFormat('MMMM dd, yy', Get.locale?.languageCode).format(when.toLocal())}\'',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20.0,

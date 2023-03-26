@@ -222,116 +222,131 @@ class LoggedInPage extends GetView<LoggedInController> {
                                           // Slider and percentage
                                           Column(
                                             children: [
-                                              SizedBox(
-                                                height: 48,
-                                                width: constraints.maxWidth - 1,
-                                                child: Stack(
-                                                  children: [
-                                                    Obx(() =>
-                                                    // Custom slider positioned respect percentage completed
-                                                        Positioned(
-                                                          top: 0,
-                                                          right: sliderHPosAndConstraints(constraints, progressValue, maxSteps),
-                                                          child: Row(
-                                                            children: [
-                                                              Container(
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                color: sliderColor),
-                                                                height: 32,
-                                                                width: 8,
-                                                                child: GestureDetector(
-                                                                  dragStartBehavior: DragStartBehavior
-                                                                      .down,
-                                                                  onTap: () {
-                                                                    //showSubtitle.value = cardKeyList[index].currentState?.mounted as bool;
-                                                                  },
-                                                                  onHorizontalDragUpdate: (details) {
-                                                                    // We read the progressValue settled when dragging started and use it to update
-                                                                    // with current delta from last tick
-                                                                    valueOnStartDragProgress = valueOnStartDragProgress + details.primaryDelta!;
-                                                                    // We verify constrains
-                                                                    double finalValue = valueOnStartDragProgress;
-                                                                    if (valueOnStartDragProgress < 0) {
-                                                                      finalValue = 0;
-                                                                    }
-                                                                    if (valueOnStartDragProgress > constraints.maxWidth) {
-                                                                      finalValue = constraints.maxWidth;
-                                                                    }
-                                                                    progressValue.value = (finalValue / constraints.maxWidth * maxSteps).toInt();
-                                                                  },
-                                                                  onHorizontalDragStart: (
-                                                                      details) {
-                                                                    sliderColor = kColorSliderDragged;
-                                                                    valueOnStartDragProgress =
-                                                                        details
-                                                                            .localPosition
-                                                                            .dx +
-                                                                            ((constraints
-                                                                                .maxWidth /
-                                                                                maxSteps) *
-                                                                                progressValue
-                                                                                    .value);
-                                                                  },
-                                                                  onHorizontalDragEnd: (details) async {
-                                                                    sliderColor = kColorSliderBase;
-                                                                    var endVal = progressValue.value;
-                                                                    await controller
-                                                                        .updateProgress(
-                                                                        endVal
-                                                                            .roundToDouble(),
-                                                                        index, maxSteps);
-                                                                    await controller.init.user
-                                                                        .refresh();
-                                                                    progressValue.value =
-                                                                        endVal.round();
-                                                                    if (endVal == maxSteps) {
-                                                                      Get.offNamed(
-                                                                          '/loggedin',
-                                                                          preventDuplicates:
-                                                                          false);
-                                                                    }
-                                                                  },
+                                              Visibility(
+                                                visible: status == StatusItemWL.active.index,
+                                                child: SizedBox(
+                                                  height: 48,
+                                                  width: constraints.maxWidth - 1,
+                                                  child: Stack(
+                                                    children: [
+                                                      Obx(() =>
+                                                      // Custom slider positioned respect percentage completed
+                                                          Positioned(
+                                                            top: 0,
+                                                            right: sliderHPosAndConstraints(constraints, progressValue, maxSteps),
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.circular(10),
+                                                                  color: sliderColor),
+                                                                  height: 32,
+                                                                  width: 8,
+                                                                  child: GestureDetector(
+                                                                    dragStartBehavior: DragStartBehavior
+                                                                        .down,
+                                                                    onTap: () {
+                                                                      //showSubtitle.value = cardKeyList[index].currentState?.mounted as bool;
+                                                                    },
+                                                                    onHorizontalDragUpdate: (details) {
+                                                                      // We read the progressValue settled when dragging started and use it to update
+                                                                      // with current delta from last tick
+                                                                      valueOnStartDragProgress = valueOnStartDragProgress + details.primaryDelta!;
+                                                                      // We verify constrains
+                                                                      double finalValue = valueOnStartDragProgress;
+                                                                      if (valueOnStartDragProgress < 0) {
+                                                                        finalValue = 0;
+                                                                      }
+                                                                      if (valueOnStartDragProgress > constraints.maxWidth) {
+                                                                        finalValue = constraints.maxWidth;
+                                                                      }
+                                                                      progressValue.value = (finalValue / constraints.maxWidth * maxSteps).toInt();
+                                                                    },
+                                                                    onHorizontalDragStart: (
+                                                                        details) {
+                                                                      sliderColor = kColorSliderDragged;
+                                                                      valueOnStartDragProgress =
+                                                                          details
+                                                                              .localPosition
+                                                                              .dx +
+                                                                              ((constraints
+                                                                                  .maxWidth /
+                                                                                  maxSteps) *
+                                                                                  progressValue
+                                                                                      .value);
+                                                                    },
+                                                                    onHorizontalDragEnd: (details) async {
+                                                                      sliderColor = kColorSliderBase;
+                                                                      var endVal = progressValue.value;
+                                                                      await controller
+                                                                          .updateProgress(
+                                                                          endVal
+                                                                              .roundToDouble(),
+                                                                          index, maxSteps);
+                                                                      await controller.init.user
+                                                                          .refresh();
+                                                                      progressValue.value =
+                                                                          endVal.round();
+                                                                      if (endVal == maxSteps) {
+                                                                        Get.offNamed(
+                                                                            '/loggedin',
+                                                                            preventDuplicates:
+                                                                            false);
+                                                                      }
+                                                                    },
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ],
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                    ),
-                                                  ],
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                 children: [
-                                                  status != StatusItemWL.completed.index && progressValue > 0? OutlinedButton(
-                                                    onPressed: () async {
-                                                      await controller
-                                                          .updateProgress(
-                                                          progressValue.value - 1
-                                                              .roundToDouble(),
-                                                          index, maxSteps);
-                                                      await controller.init.user
-                                                          .refresh();
-                                                    },
-                                                    child: const Text("-"),
-                                                  ): const SizedBox(),
+                                                  Visibility(
+                                                    maintainSize: true,
+                                                    maintainAnimation: true,
+                                                    maintainState: true,
+                                                    visible: status == StatusItemWL.active.index && progressValue > 0 ,
+                                                    child: OutlinedButton(
+                                                      onPressed: () async {
+                                                        await controller
+                                                            .updateProgress(
+                                                            progressValue.value - 1
+                                                                .roundToDouble(),
+                                                            index, maxSteps);
+                                                        await controller.init.user
+                                                            .refresh();
+                                                      },
+                                                      child: const Text("-"),
+                                                    ),
+                                                  ),
                                                   const SizedBox(width: 10,),
                                                   Obx(() =>
                                                       Text("${progressValue.value}/$maxSteps")),
                                                   const SizedBox(width: 10,),
-                                                  progressValue < maxSteps? OutlinedButton(
-                                                    onPressed: () async {
-                                                      await controller
-                                                          .updateProgress(
-                                                          progressValue.value + 1
-                                                              .roundToDouble(),
-                                                          index, maxSteps);
-                                                      await controller.init.user
-                                                          .refresh();
-                                                    },
-                                                    child: const Text("+"),
-                                                  ):const SizedBox(),
+                                                  Visibility(
+                                                    visible: status == StatusItemWL.active.index && progressValue < maxSteps,
+                                                    maintainSize: true,
+                                                    maintainAnimation: true,
+                                                    maintainState: true,
+                                                    child: OutlinedButton(
+                                                      onPressed: () async {
+                                                        await controller
+                                                            .updateProgress(
+                                                            progressValue.value + 1
+                                                                .roundToDouble(),
+                                                            index, maxSteps);
+                                                        await controller.init.user
+                                                            .refresh();
+                                                      },
+                                                      child: const Text("+"),
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                               const SizedBox(height: 4,),
