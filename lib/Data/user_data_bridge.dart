@@ -171,4 +171,19 @@ class UserDataBridge extends DB {
       }
     ]);
   }
-}
+
+  Future<void> setCategoriesToWish(username, index, categories) async {
+
+    await collWishes.updateOne({
+      'owner': username,
+      'indexAtUserList': index
+    }, [{
+      '\$set': {
+        'categories': categories
+      }
+    }
+    ]);
+
+  }
+  }
+

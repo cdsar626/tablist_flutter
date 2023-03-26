@@ -25,11 +25,36 @@ class LoggedInPage extends GetView<LoggedInController> {
     String newWishSteps = '';
     TextEditingController newWishStepsController = TextEditingController();
     RxBool asyncLoading = false.obs;
+    RxBool asyncLoadingCats = false.obs;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: const Text('TABList'),
           //titleSpacing: 0,
+          actions: [
+            Obx(() => Visibility(
+                replacement: const CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+                visible: !asyncLoadingCats.value,
+                child: IconButton(onPressed: () async {
+                  asyncLoadingCats.value = true;
+                  await controller.setCategoriesToOldWishes(
+                      controller.init.user.value.username,
+                      controller.init.user.value.wishes,
+                  );
+                  await controller.init.user.refresh();
+                  asyncLoadingCats.value = false;
+                  Get.offNamed(
+                      '/loggedin',
+                      preventDuplicates:
+                      false);
+                },
+                    tooltip: "Load categories for each wish, only needed once",
+                    icon: const Icon(EvaIcons.refreshOutline)),
+              ),
+            )
+          ],
           leading: TextButton(
               onPressed: () async {
                 await controller.logOut();
