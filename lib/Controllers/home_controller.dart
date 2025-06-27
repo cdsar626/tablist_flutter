@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import 'package:tablist_app/Models/User.dart';
+import 'package:tablist_app/Models/user.dart';
 import 'package:tablist_app/Data/user_data_bridge.dart';
 
 import '../init.dart';
@@ -17,7 +17,7 @@ class HomeController extends GetxController {
   void setUsername(String username) {
     init.user.value = User(
       username,
-      username+'@gmail.com',
+      '$username@gmail.com',
       DateTime.now(),
       DateTime.now(),
       [],

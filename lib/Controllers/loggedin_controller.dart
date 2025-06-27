@@ -2,7 +2,7 @@ import 'package:tablist_app/Models/status_item_wl.dart';
 import 'package:tablist_app/init.dart';
 import 'package:get/get.dart';
 
-import '../Models/User.dart';
+import '../Models/user.dart';
 import '../Data/user_data_bridge.dart';
 
 class LoggedInController extends GetxController {

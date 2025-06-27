@@ -1,4 +1,4 @@
-import 'package:tablist_app/Models/User.dart';
+import 'package:tablist_app/Models/user.dart';
 import 'package:tablist_app/Models/status_item_wl.dart';
 import 'package:tablist_app/db_connection.dart';
 import 'package:mongo_dart/mongo_dart.dart';

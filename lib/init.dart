@@ -1,4 +1,4 @@
-import 'package:tablist_app/Models/User.dart';
+import 'package:tablist_app/Models/user.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tablist_app/Data/user_data_bridge.dart';
