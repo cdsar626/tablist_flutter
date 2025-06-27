@@ -37,16 +37,16 @@ dependencies:
   cupertino_icons: ^1.0.2
   get: ^4.6.1
   flutter_neumorphic: ^3.2.0
-  mongo_dart: ^0.7.4
+  mongo_dart: ^0.10.5
   hive_flutter: ^1.1.0
-  expansion_tile_card: ^2.0.0
+  expansion_tile_card: ^3.0.0
   dotted_decoration: ^2.0.0
   eva_icons_flutter: ^3.1.0
   material_dialogs: ^1.1.4
-  intl: ^0.18.0
+  intl: ^0.20.2
 
 dev_dependencies:
-  flutter_launcher_icons: "^0.11.0"
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
 
