@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import 'package:tablist_app/Models/User.dart';
+import 'package:tablist_app/Models/user.dart';
 import 'package:tablist_app/Data/user_data_bridge.dart';
 
 import '../init.dart';
@@ -11,13 +11,13 @@ class HomeController extends GetxController {
   HomeController(this.init);
 
   Rx<User>? getUser() {
-      return init.user;
+    return init.user;
   }
 
   void setUsername(String username) {
     init.user.value = User(
       username,
-      username+'@gmail.com',
+      '$username@gmail.com',
       DateTime.now(),
       DateTime.now(),
       [],
@@ -25,15 +25,15 @@ class HomeController extends GetxController {
   }
 
   Future<bool> userExists(String username) async{
-    return await UserDataBridge(init.mongoDB).userExists(username);
+    return await UserDataBridge(init.mongoDB!).userExists(username);
   }
 
   Future<void> createUser(String username) async {
-    await UserDataBridge(init.mongoDB).createUser(username);
+    await UserDataBridge(init.mongoDB!).createUser(username);
   }
 
   Future<void> loadUser(String username) async {
-    init.user.value = await UserDataBridge(init.mongoDB).loadUser(username);
+    init.user.value = await UserDataBridge(init.mongoDB!).loadUser(username);
   }
 
 }

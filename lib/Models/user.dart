@@ -13,11 +13,11 @@ class User {
     this._wishes,
   );
 
-  get username => _username;
-  get email => _email;
-  get firstLogin => _firstLogin;
-  get birthday => _birthday;
-  get wishes => _wishes;
+  String get username => _username;
+  String? get email => _email;
+  DateTime get firstLogin => _firstLogin;
+  DateTime? get birthday => _birthday;
+  List get wishes => _wishes;
 
   set wishes(wishList) => _wishes = wishList;
 

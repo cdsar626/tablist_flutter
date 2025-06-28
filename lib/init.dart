@@ -1,4 +1,4 @@
-import 'package:tablist_app/Models/User.dart';
+import 'package:tablist_app/Models/user.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tablist_app/Data/user_data_bridge.dart';
@@ -26,17 +26,17 @@ class Init {
     }
   }
 
-  get mongoDB => _mongoDB;
-  get hiveDB => _hiveDB;
-  get user => _user;
+  DB? get mongoDB => _mongoDB;
+  Box? get hiveDB => _hiveDB;
+  Rx<User> get user => _user;
 
 
-  static _registerServices() async {
+  static Future<void> _registerServices() async {
     //TODO register services
 
   }
 
-  static _loadSettings() async {
+  static Future<void> _loadSettings() async {
     //TODO load settings
   }
 
