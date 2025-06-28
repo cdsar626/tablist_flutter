@@ -1,4 +1,4 @@
-package com.cdsar626.clean_bucket_list
+package com.cdsar626.tablist
 
 import io.flutter.embedding.android.FlutterActivity
 
