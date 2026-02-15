@@ -14,7 +14,7 @@ import 'package:material_dialogs/material_dialogs.dart';
 import 'package:tablist_app/kUI.dart';
 
 class LoggedInPage extends GetView<LoggedInController> {
-  const LoggedInPage({Key? key}) : super(key: key);
+  const LoggedInPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                       children: [
                         Text(
                           'happy_msg01'.trParams({
-                            'username': controller.init.hiveDB
+                            'username': controller.init.hiveDB!
                                 .get('username')
                                 .toString()
                           }),
@@ -189,7 +189,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                     await controller
                                                         .pauseButtonPressed(
                                                         status, index);
-                                                    await controller
+                                                    controller
                                                         .init.user
                                                         .refresh();
                                                     Get.offNamed(
@@ -205,7 +205,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                     await controller
                                                         .abandonedButtonPressed(
                                                         status, index);
-                                                    await controller
+                                                    controller
                                                         .init.user
                                                         .refresh();
                                                     Get.offNamed(
@@ -283,7 +283,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                                           endVal
                                                                               .roundToDouble(),
                                                                           index, maxSteps);
-                                                                      await controller.init.user
+                                                                      controller.init.user
                                                                           .refresh();
                                                                       progressValue.value =
                                                                           endVal.round();
@@ -319,7 +319,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                             progressValue.value - 1
                                                                 .roundToDouble(),
                                                             index, maxSteps);
-                                                        await controller.init.user
+                                                        controller.init.user
                                                             .refresh();
                                                       },
                                                       child: const Text("-"),
@@ -341,7 +341,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                             progressValue.value + 1
                                                                 .roundToDouble(),
                                                             index, maxSteps);
-                                                        await controller.init.user
+                                                        controller.init.user
                                                             .refresh();
                                                       },
                                                       child: const Text("+"),
@@ -447,7 +447,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                               await controller
                                                                   .deleteWish(index);
                                                               cardExpansionKeyList[index].currentState?.collapse();
-                                                              await controller.init.user.refresh();
+                                                              controller.init.user.refresh();
                                                               Get.offNamed(
                                                                   '/loggedin',
                                                                   preventDuplicates:
@@ -565,7 +565,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                           }
                           await controller.newWish(newWishInput, newWishSteps);
                           await controller.loadWishes();
-                          await controller.init.user.refresh();
+                          controller.init.user.refresh();
                           Get.back();
                         },
                           text: "add_wish".tr

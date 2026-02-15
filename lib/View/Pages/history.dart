@@ -7,8 +7,7 @@ import 'package:tablist_app/Models/status_item_wl.dart';
 import 'package:intl/intl.dart';
 
 class HistoryPage extends GetView<HistoryController> {
-  const HistoryPage({Key? key, required this.title, required this.log})
-      : super(key: key);
+  const HistoryPage({super.key, required this.title, required this.log});
 
   final List log;
   final String title;
@@ -88,8 +87,7 @@ class HistoryPage extends GetView<HistoryController> {
 class CardHistory extends StatelessWidget {
   final DateTime when;
   final List<ActionRowOfDayHistory> rowsOfActions;
-  const CardHistory(this.when, this.rowsOfActions, {Key? key})
-      : super(key: key);
+  const CardHistory(this.when, this.rowsOfActions, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +125,8 @@ class ActionRowOfDayHistory extends StatelessWidget {
     this.status,
     this.progressNum,
     this.when, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -166,8 +164,8 @@ class HistoryLine1 extends StatelessWidget {
     this.log,
     this.index,
     this.status, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

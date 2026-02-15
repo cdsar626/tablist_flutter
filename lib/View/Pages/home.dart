@@ -3,7 +3,7 @@ import 'package:tablist_app/Controllers/home_controller.dart';
 import 'package:get/get.dart';
 
 class HomePage extends GetView<HomeController> {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +35,15 @@ class HomePage extends GetView<HomeController> {
                     if (!await controller.userExists(userInput)) {
                       controller.createUser(userInput);
                     }
-                    controller.init.hiveDB.put('username', userInput);
-                    controller.init.hiveDB.put('isLoggedIn', true);
+                    controller.init.hiveDB?.put('username', userInput);
+                    controller.init.hiveDB?.put('isLoggedIn', true);
                     await controller.loadUser(userInput);
                     Get.offAndToNamed('/loggedin');
                   },
                   child: Text(
-                      !controller.init.hiveDB.get('isLoggedIn', defaultValue: false)
+                      !controller.init.hiveDB?.get('isLoggedIn', defaultValue: false)
                           ? 'log_in'.tr
-                          : controller.getUser()?.value.username,
+                          : controller.getUser()!.value.username,
                     ),
                 ),
             ],
