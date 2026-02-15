@@ -11,7 +11,7 @@ import 'package:tablist_app/View/Pages/history.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:material_dialogs/material_dialogs.dart';
 
-import 'package:tablist_app/kUI.dart';
+import 'package:tablist_app/k_ui.dart';
 
 class LoggedInPage extends GetView<LoggedInController> {
   const LoggedInPage({super.key});
@@ -430,6 +430,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                     title: "delete_wish".tr,
                                                     msg: "cant_undone".tr,
                                                         // onClose: (val) {print("closed from $val");},
+                                                        // ignore: deprecated_member_use
                                                         actions: [
                                                           IconsOutlineButton(
                                                             onPressed: () {
@@ -499,6 +500,7 @@ class LoggedInPage extends GetView<LoggedInController> {
             },
             dialogShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             title: "add_new_wish".tr,
+              // ignore: deprecated_member_use
               actions: [
                 Obx(
                   () => Wrap(

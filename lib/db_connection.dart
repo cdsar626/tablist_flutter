@@ -1,5 +1,8 @@
 import 'package:mongo_dart/mongo_dart.dart';
 
+// TODO: Replace with your actual MongoDB connection URI
+const String conectionURI = "mongodb+srv://admin:admin@cluster0.abcde.mongodb.net/test?retryWrites=true&w=majority";
+
 class DB {
   late Db db;
   late DbCollection collUsers;
