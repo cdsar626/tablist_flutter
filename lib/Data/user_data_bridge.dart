@@ -12,12 +12,15 @@ class UserDataBridge extends DB {
 
   Future<User> loadUser(String username) async {
     var userdata = await collUsers.findOne(where.eq('username', username));
+    if (userdata == null) {
+      return User('', '', DateTime.now(), DateTime.now(), []);
+    }
     var wishes = await getWishes(username);
     return User(
-      userdata?['username'],
-      userdata?['email'],
-      userdata?['firstLogin'],
-      userdata?['birthday'],
+      userdata['username'] ?? '',
+      userdata['email'],
+      userdata['firstLogin'] ?? DateTime.now(),
+      userdata['birthday'],
       wishes,
     );
   }
@@ -67,7 +70,11 @@ class UserDataBridge extends DB {
 
   Future<List> getWishes(String username) async {
     var wishes = await collWishes.find({'owner': username}).toList();
-    wishes.sort((a, b) => a['indexAtUserList'].compareTo(b['indexAtUserList']));
+    wishes.sort((a, b) {
+      var aIdx = a['indexAtUserList'] ?? 0;
+      var bIdx = b['indexAtUserList'] ?? 0;
+      return aIdx.compareTo(bIdx);
+    });
     return wishes;
   }
 
