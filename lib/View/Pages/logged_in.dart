@@ -18,8 +18,6 @@ class LoggedInPage extends GetView<LoggedInController> {
 
   @override
   Widget build(BuildContext context) {
-    final List<GlobalKey<ExpansionTileCardState>> cardContainerKeyList = [];
-    final List<GlobalKey<ExpansionTileCardState>> cardExpansionKeyList = [];
     String newWishInput = '';
     TextEditingController newWishInputController = TextEditingController();
     String newWishSteps = '';
@@ -79,9 +77,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                           }
 
                           reorderLocalWishesList(oldIndex, newIndex, controller);
-                          // To keep current state of expanded/collapsed when reordering
-                          cardContainerKeyList.insert(
-                              newIndex, cardContainerKeyList.removeAt(oldIndex));
+                          // reorderLocalWishesList handles updating the user context list
 
                           // We call updateWishesSort to update the database with the
                           // new values of the user index
@@ -99,8 +95,6 @@ class LoggedInPage extends GetView<LoggedInController> {
                         int status =
                             controller.init.user.value.wishes[index]['status'];
                         //var currentItem = controller.init.user.value.wishes[index];
-                        cardContainerKeyList.add(GlobalKey());
-                        cardExpansionKeyList.add(GlobalKey());
                         double valueOnStartDragProgress = 0;
                         RxBool showSubtitle = true.obs;
                         RxInt progressValue = 0.obs;
@@ -117,7 +111,7 @@ class LoggedInPage extends GetView<LoggedInController> {
                             linePosition: LinePosition.top,
                             dash: const <int>[16, 32],
                           ),
-                          key: cardContainerKeyList[index],
+                          key: ValueKey(controller.init.user.value.wishes[index].hashCode.toString() + creationDate.toString()),
                           child: LayoutBuilder(builder: (context, constraints) {
                             return Stack(
                               children: [
@@ -132,7 +126,6 @@ class LoggedInPage extends GetView<LoggedInController> {
                                 ),
                                 Obx( () {
                                   return ExpansionTileCard(
-                                    key: cardExpansionKeyList[index],
                                     onExpansionChanged: (isExpanded) {
                                       showSubtitle.value = !isExpanded;
                                     },
@@ -447,7 +440,6 @@ class LoggedInPage extends GetView<LoggedInController> {
                                                               Get.back();
                                                               await controller
                                                                   .deleteWish(index);
-                                                              cardExpansionKeyList[index].currentState?.collapse();
                                                               controller.init.user.refresh();
                                                               Get.offNamed(
                                                                   '/loggedin',

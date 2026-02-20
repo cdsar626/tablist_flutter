@@ -12,6 +12,7 @@ import 'Bindings/home_bindings.dart';
 import 'View/Pages/home.dart';
 
 void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
   var init = Init();
   runApp(FutureBuilder(
     future: init.initialize(),
