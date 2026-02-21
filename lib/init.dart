@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:tablist_app/Models/user.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -5,7 +6,7 @@ import 'package:tablist_app/Data/user_data_bridge.dart';
 
 import 'db_connection.dart';
 
-class Init {
+class Init with WidgetsBindingObserver {
 
   DB? _mongoDB;
   Box<dynamic>? _hiveDB;
@@ -18,6 +19,7 @@ class Init {
   ).obs;
 
   Future<void> initialize() async {
+    WidgetsBinding.instance.addObserver(this);
     await Hive.initFlutter();
     _hiveDB = await Hive.openBox('UBL');
     _mongoDB = await DB().initDBConnection();
@@ -42,4 +44,12 @@ class Init {
     //TODO load settings
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (_mongoDB != null) {
+        _mongoDB!.ensureConnected();
+      }
+    }
+  }
 }

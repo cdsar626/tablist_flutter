@@ -36,6 +36,52 @@ class LoggedInPage extends GetView<LoggedInController> {
                 EvaIcons.logOut,
                 size: 40,
               )),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('Filters'.tr),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Obx(() => CheckboxListTile(
+                            title: Text('Active'.tr),
+                            value: controller.showActive.value,
+                            onChanged: (_) => controller.toggleFilter('active'),
+                          )),
+                          Obx(() => CheckboxListTile(
+                            title: Text('Paused'.tr),
+                            value: controller.showPaused.value,
+                            onChanged: (_) => controller.toggleFilter('paused'),
+                          )),
+                          Obx(() => CheckboxListTile(
+                            title: Text('Dropped'.tr),
+                            value: controller.showAbandoned.value,
+                            onChanged: (_) => controller.toggleFilter('abandoned'),
+                          )),
+                          Obx(() => CheckboxListTile(
+                            title: Text('Completed'.tr),
+                            value: controller.showCompleted.value,
+                            onChanged: (_) => controller.toggleFilter('completed'),
+                          )),
+                        ],
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('close'.tr),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
         body: Container(
           margin: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -65,9 +111,18 @@ class LoggedInPage extends GetView<LoggedInController> {
                 child: Obx(
                   () => ReorderableListView.builder(
                       dragStartBehavior: DragStartBehavior.start,
-                      onReorder: (oldIndex, newIndex) async {
+                      onReorder: (oldFIndex, newFIndex) async {
+                          // Map filtered indices to real indices
+                          int oldIndex = controller.filteredIndices[oldFIndex];
+                          int newIndex;
+                          if (newFIndex < controller.filteredIndices.length) {
+                             newIndex = controller.filteredIndices[newFIndex];
+                          } else {
+                             newIndex = controller.init.user.value.wishes.length;
+                          }
+
                           // these 'if' are for fix the bugs of the onReorder method
-                        if (oldIndex < newIndex) {
+                          if (oldIndex < newIndex) {
                             newIndex -= 1;
                           }
                           if (oldIndex == newIndex) {
@@ -86,8 +141,9 @@ class LoggedInPage extends GetView<LoggedInController> {
                               oldIndex,
                               newIndex);
                         },
-                      itemCount: controller.init.user.value.wishes.length,
-                      itemBuilder: (context, index) {
+                      itemCount: controller.filteredIndices.length,
+                      itemBuilder: (context, fIndex) {
+                        int index = controller.filteredIndices[fIndex];
                         DateTime creationDate =
                             controller.init.user.value.wishes[index]['creation'];
                         List historyOfiWish = controller.init.user.value.wishes[index]["history"];

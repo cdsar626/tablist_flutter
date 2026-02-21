@@ -8,7 +8,58 @@ import '../Data/user_data_bridge.dart';
 class LoggedInController extends GetxController {
   final Init init;
 
-  LoggedInController(this.init);
+  late RxBool showActive;
+  late RxBool showPaused;
+  late RxBool showAbandoned;
+  late RxBool showCompleted;
+
+  LoggedInController(this.init) {
+    bool activeVal = init.hiveDB?.get('showActive', defaultValue: true) as bool? ?? true;
+    showActive = activeVal.obs;
+
+    bool pausedVal = init.hiveDB?.get('showPaused', defaultValue: true) as bool? ?? true;
+    showPaused = pausedVal.obs;
+
+    bool abandonedVal = init.hiveDB?.get('showAbandoned', defaultValue: true) as bool? ?? true;
+    showAbandoned = abandonedVal.obs;
+
+    bool completedVal = init.hiveDB?.get('showCompleted', defaultValue: true) as bool? ?? true;
+    showCompleted = completedVal.obs;
+  }
+
+  void toggleFilter(String filter) {
+    if (filter == 'active') {
+      showActive.toggle();
+      init.hiveDB?.put('showActive', showActive.value);
+    } else if (filter == 'paused') {
+      showPaused.toggle();
+      init.hiveDB?.put('showPaused', showPaused.value);
+    } else if (filter == 'abandoned') {
+      showAbandoned.toggle();
+      init.hiveDB?.put('showAbandoned', showAbandoned.value);
+    } else if (filter == 'completed') {
+      showCompleted.toggle();
+      init.hiveDB?.put('showCompleted', showCompleted.value);
+    }
+  }
+
+  List<int> get filteredIndices {
+    List<int> indices = [];
+    for (int i = 0; i < init.user.value.wishes.length; i++) {
+      int status = init.user.value.wishes[i]['status'];
+      if (status == StatusItemWL.active.index && showActive.value) {
+        indices.add(i);
+      } else if (status == StatusItemWL.paused.index && showPaused.value) {
+        indices.add(i);
+      } else if (status == StatusItemWL.abandoned.index && showAbandoned.value) {
+        indices.add(i);
+      } else if (status == StatusItemWL.completed.index && showCompleted.value) {
+        indices.add(i);
+      }
+    }
+    return indices;
+  }
+
 
   void clearUser() {
     init.user.value = User(
