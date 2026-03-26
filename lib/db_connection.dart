@@ -15,4 +15,10 @@ class DB {
     collWishes = db.collection('Wishes');
     return this;
   }
+
+  Future<void> ensureConnected() async {
+    if (!db.isConnected) {
+      await db.open();
+    }
+  }
 }

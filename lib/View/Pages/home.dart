@@ -31,14 +31,19 @@ class HomePage extends GetView<HomeController> {
               ),
               ElevatedButton(
                   onPressed: () async {
-                    // Todo Login user
+                    if (userInput.trim().isEmpty) return;
+                    // Create user if it doesn't exist
                     if (!await controller.userExists(userInput)) {
-                      controller.createUser(userInput);
+                      await controller.createUser(userInput);
                     }
-                    controller.init.hiveDB?.put('username', userInput);
-                    controller.init.hiveDB?.put('isLoggedIn', true);
+                    // Await Hive puts so state is persisted before navigation
+                    await controller.init.hiveDB?.put('username', userInput);
+                    await controller.init.hiveDB?.put('isLoggedIn', true);
                     await controller.loadUser(userInput);
-                    Get.offAndToNamed('/loggedin');
+                    // Verify user was loaded successfully before navigating
+                    if (controller.getUser()?.value.username.isNotEmpty ?? false) {
+                      Get.offAndToNamed('/loggedin');
+                    }
                   },
                   child: Text(
                       !controller.init.hiveDB?.get('isLoggedIn', defaultValue: false)

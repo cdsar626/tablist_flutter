@@ -24,7 +24,18 @@ class Init with WidgetsBindingObserver {
     _hiveDB = await Hive.openBox('UBL');
     _mongoDB = await DB().initDBConnection();
     if (_hiveDB?.get('isLoggedIn', defaultValue: false)) {
-      _user.value = await UserDataBridge(_mongoDB!).loadUser(_hiveDB?.get('username'));
+      String? savedUsername = _hiveDB?.get('username');
+      if (savedUsername != null && savedUsername.isNotEmpty) {
+        _user.value = await UserDataBridge(_mongoDB!).loadUser(savedUsername);
+        // If user wasn't found in DB, reset login state
+        if (_user.value.username.isEmpty) {
+          _hiveDB?.put('isLoggedIn', false);
+          _hiveDB?.put('username', '');
+        }
+      } else {
+        // No valid username saved, reset login state
+        _hiveDB?.put('isLoggedIn', false);
+      }
     }
     await _registerServices();
     await _loadSettings();
